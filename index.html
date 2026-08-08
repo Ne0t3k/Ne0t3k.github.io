@@ -3,27 +3,158 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ne0t3k | Cybersecurity Portfolio</title>
+  <meta name="description" content="Portfolio de Ne0t3k: write-ups de CTF, investigación y automatización en ciberseguridad.">
+  <title>Ne0t3k | CTF Write-ups & Security Research</title>
+  <style>
+    :root {
+      --bg: #090d12;
+      --panel: #101720;
+      --panel-2: #141e29;
+      --line: #263647;
+      --text: #e8f0f6;
+      --muted: #94a7b8;
+      --cyan: #35d5e5;
+      --green: #74f7a5;
+      --orange: #ffb86b;
+      --shadow: 0 18px 60px rgba(0, 0, 0, .28);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background: radial-gradient(circle at 15% 0%, #123244 0, transparent 30rem), var(--bg);
+      font: 16px/1.65 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+    a { color: inherit; text-decoration: none; }
+    .wrap { width: min(1120px, calc(100% - 2.5rem)); margin: auto; }
+    header { border-bottom: 1px solid var(--line); background: rgba(9,13,18,.8); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 3; }
+    nav { min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    .brand { font-size: 1.15rem; font-weight: 800; letter-spacing: .03em; }
+    .brand span, .accent { color: var(--cyan); }
+    .links { display: flex; gap: 1.25rem; color: var(--muted); font-size: .9rem; }
+    .links a:hover { color: var(--cyan); }
+    .hero { padding: 7rem 0 5rem; min-height: 560px; display: grid; align-content: center; }
+    .eyebrow { color: var(--green); font-size: .85rem; letter-spacing: .08em; text-transform: uppercase; }
+    h1 { font-size: clamp(2.7rem, 8vw, 6rem); line-height: .95; letter-spacing: -.07em; margin: .7rem 0 1.5rem; }
+    .hero p { max-width: 690px; font-size: clamp(1rem, 2vw, 1.2rem); color: var(--muted); }
+    .cta-row { display: flex; gap: .8rem; flex-wrap: wrap; margin-top: 1.7rem; }
+    .button { border: 1px solid var(--cyan); background: var(--cyan); color: #061116; padding: .72rem 1rem; font-weight: 800; transition: .2s; }
+    .button:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(53,213,229,.2); }
+    .button.ghost { color: var(--text); background: transparent; border-color: var(--line); }
+    .button.ghost:hover { border-color: var(--cyan); }
+    section { padding: 2rem 0 4.5rem; }
+    .section-title { display: flex; align-items: center; gap: .8rem; margin-bottom: 1.5rem; font-size: 1.25rem; }
+    .section-title::before { content: "//"; color: var(--cyan); }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .card { background: linear-gradient(145deg, rgba(20,30,41,.94), rgba(13,20,28,.94)); border: 1px solid var(--line); padding: 1.35rem; box-shadow: var(--shadow); transition: .2s; }
+    .card:hover { border-color: #3c5d73; transform: translateY(-4px); }
+    .tag { color: var(--orange); font-size: .77rem; text-transform: uppercase; letter-spacing: .06em; }
+    .card h3 { margin: .55rem 0; font-size: 1.1rem; }
+    .card p { color: var(--muted); margin: 0 0 1rem; font-size: .9rem; }
+    .card a { color: var(--cyan); font-size: .86rem; }
+    .about { display: grid; grid-template-columns: 1.35fr .65fr; gap: 1rem; }
+    .terminal { background: #05080b; border: 1px solid var(--line); padding: 1.3rem; color: #bdd0dd; overflow: auto; }
+    .terminal .prompt { color: var(--green); }
+    .terminal .out { color: var(--muted); }
+    footer { border-top: 1px solid var(--line); color: var(--muted); padding: 1.8rem 0; font-size: .85rem; }
+    @media (max-width: 760px) {
+      .links { display: none; }
+      .hero { padding: 5rem 0 3rem; min-height: 470px; }
+      .grid, .about { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
-  <h1>Ne0t3k</h1>
-  <h2>Cybersecurity Portfolio</h2>
+  <header>
+    <nav class="wrap">
+      <a class="brand" href="#inicio">NE0T3K<span>_</span></a>
+      <div class="links">
+        <a href="#writeups">Write-ups</a>
+        <a href="#proyectos">Proyectos</a>
+        <a href="#sobre-mi">Sobre mí</a>
+        <a href="https://github.com/Ne0t3k" target="_blank" rel="noopener">GitHub ↗</a>
+      </div>
+    </nav>
+  </header>
 
-  <p>
-    Write-ups de CTF, notas técnicas y proyectos de automatización
-    orientados a ciberseguridad.
-  </p>
+  <main>
+    <section class="hero wrap" id="inicio">
+      <div class="eyebrow">CTF player · Security research · Automation</div>
+      <h1>Romper.<br><span class="accent">Entender.</span><br>Documentar.</h1>
+      <p>Write-ups de CTFs, notas técnicas y herramientas de automatización orientadas a la investigación ofensiva y la seguridad defensiva.</p>
+      <div class="cta-row">
+        <a class="button" href="#writeups">Explorar write-ups</a>
+        <a class="button ghost" href="https://github.com/Ne0t3k" target="_blank" rel="noopener">Ver GitHub ↗</a>
+      </div>
+    </section>
 
-  <h2>Contenido</h2>
-  <ul>
-    <li>Write-ups de CTFs y laboratorios autorizados</li>
-  </ul>
+    <section class="wrap" id="writeups">
+      <h2 class="section-title">Últimos write-ups</h2>
+      <div class="grid">
+        <article class="card">
+          <div class="tag">CTF · Web</div>
+          <h3>Próximo reto web</h3>
+          <p>Análisis del vector de entrada, metodología, evidencias y mitigaciones aplicables.</p>
+          <a href="#">Read write-up →</a>
+        </article>
+        <article class="card">
+          <div class="tag">CTF · Forensics</div>
+          <h3>Próximo reto forense</h3>
+          <p>Investigación reproducible, línea temporal y artefactos relevantes del reto.</p>
+          <a href="#">Read write-up →</a>
+        </article>
+        <article class="card">
+          <div class="tag">CTF · Pwn / Misc</div>
+          <h3>Próximo reto técnico</h3>
+          <p>Proceso de resolución explicado con claridad y referencias para profundizar.</p>
+          <a href="#">Read write-up →</a>
+        </article>
+      </div>
+    </section>
 
-  <h2>Uso responsable</h2>
-  <p>
-    Este contenido se publica con fines educativos y se aplica únicamente
-    en entornos autorizados, laboratorios y retos CTF.
-  </p>
+    <section class="wrap" id="proyectos">
+      <h2 class="section-title">Proyectos</h2>
+      <div class="grid">
+        <article class="card">
+          <div class="tag">Python · OSINT</div>
+          <h3>Recon & OSINT</h3>
+          <p>Automatización y normalización de datos para reconocimiento de infraestructura autorizado.</p>
+          <a href="https://github.com/Ne0t3k" target="_blank" rel="noopener">Repositorio →</a>
+        </article>
+        <article class="card">
+          <div class="tag">Research</div>
+          <h3>Notas de investigación</h3>
+          <p>Apuntes técnicos sobre Active Directory, redes, cloud y metodologías de auditoría.</p>
+          <a href="#">Ver notas →</a>
+        </article>
+        <article class="card">
+          <div class="tag">Labs</div>
+          <h3>Laboratorios autorizados</h3>
+          <p>Lecciones extraídas de entornos de formación y retos diseñados para aprender.</p>
+          <a href="#">Ver laboratorios →</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="wrap" id="sobre-mi">
+      <h2 class="section-title">Sobre mí</h2>
+      <div class="about">
+        <div class="card">
+          <h3>Ne0t3k</h3>
+          <p>Profesional de ciberseguridad centrado en red team, análisis de superficies de ataque, automatización y aprendizaje continuo mediante CTFs.</p>
+          <p>Todo el contenido se publica con finalidad educativa y se aplica exclusivamente en CTFs, laboratorios y sistemas con autorización explícita.</p>
+        </div>
+        <div class="terminal" aria-label="Perfil técnico">
+          <div><span class="prompt">ne0t3k@lab:~$</span> cat profile.txt</div>
+          <div class="out">focus: offensive security<br>stack: python · linux · ad<br>mode: learn / build / share</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">© 2026 Ne0t3k · Built for learning, research and authorized environments.</div>
+  </footer>
 </body>
 </html>
-
