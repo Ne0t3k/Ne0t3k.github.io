@@ -139,15 +139,15 @@ h1 span {
   margin: 0.65rem 0 1.35rem;
   font-family: "Syne", sans-serif;
   font-weight: 800;
-  line-height: 1;
-  letter-spacing: -0.06em;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
   text-shadow: 0 0 28px rgba(161, 118, 255, 0.2);
   overflow-wrap: break-word;
   word-break: break-word;
 }
 
 .article h1 {
-  font-size: clamp(2.35rem, 5vw, 4.2rem);
+  font-size: clamp(1.9rem, 3.6vw, 3rem);
 }
 
 .listing h1 {
@@ -508,7 +508,7 @@ footer {
 
   .article h1,
   .listing h1 {
-    font-size: clamp(1.85rem, 9vw, 2.6rem);
+    font-size: clamp(1.6rem, 8vw, 2.2rem);
   }
 
   .lead {
@@ -545,4 +545,27 @@ footer {
 .content pre.term-log .hl-green {
   color: var(--lime);
   font-weight: 700;
+}
+
+/* ============================
+   Etiquetas coloreadas en listas de artículos
+   ============================ */
+.content ul li > strong:first-child {
+  color: var(--cyan);
+}
+
+.content ul li:nth-of-type(4n+2) > strong:first-child {
+  color: var(--pink);
+}
+
+.content ul li:nth-of-type(4n+3) > strong:first-child {
+  color: var(--lime);
+}
+
+.content ul li:nth-of-type(4n) > strong:first-child {
+  color: var(--orange);
+}
+
+.content ol li > strong:first-child {
+  color: var(--cyan);
 }
