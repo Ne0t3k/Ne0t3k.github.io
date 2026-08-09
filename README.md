@@ -1,52 +1,23 @@
-# Ne0t3k Hugo
+Ne0t3k
+Portfolio técnico y bitácora de ciberseguridad de Ne0t3k.
 
-Este repositorio contiene un sitio Hugo diseñado para GitHub Pages.
+El sitio reúne write-ups de CTF, investigación técnica, reflexiones y proyectos relacionados con seguridad ofensiva, OSINT, ciberinteligencia, análisis de infraestructuras y automatización.
 
-## Publicar por primera vez en GitHub
+Web: ne0t3k.github.io
 
-1. Descarga y descomprime este proyecto.
-2. En tu repositorio `Ne0t3k.github.io`, elimina el antiguo `index.html`.
-3. Sube **el contenido descomprimido** de esta carpeta al directorio raíz del repositorio. Debes ver `hugo.toml`, `content`, `layouts`, `assets` y `.github` en la raíz; no una carpeta adicional que los contenga.
-4. Haz commit de los cambios.
-5. Abre `Settings` → `Pages` y cambia **Source** a **GitHub Actions**. No selecciones `Deploy from a branch`.
-6. Abre `Actions`. El workflow `Publicar sitio Hugo en GitHub Pages` construirá y desplegará el sitio. Cuando aparezca en verde, estará disponible en `https://ne0t3k.github.io/`.
+Áreas de interés
+Seguridad ofensiva y red team
 
-## Crear una publicación
+Operaciones SOC, detección y respuesta ante incidentes
 
-Crea un archivo en una de estas ubicaciones:
+OSINT y ciberinteligencia
 
-- `content/writeups/nombre-del-reto.md`
-- `content/investigaciones/nombre-de-la-investigacion.md`
-- `content/reflexiones/titulo-de-la-reflexion.md`
+Análisis de infraestructuras
 
-Usa esta plantilla:
+Automatización aplicada a la investigación
 
-```md
----
-title: "Título de la publicación"
-date: 2026-08-09T10:00:00+02:00
-description: "Resumen breve que aparecerá en las tarjetas y buscadores."
-plataforma: "Hack The Box" # opcional
-categorias: ["Write-ups"]
-etiquetas: ["ctf", "web"]
-draft: false
----
-
-## Resumen
-
-Escribe aquí.
-```
-
-Haz commit. Hugo crea automáticamente la página, el índice, las etiquetas, las categorías, el tiempo de lectura, la tabla de contenidos y los enlaces relacionados.
-
-## Vista previa local opcional
-
-En Linux/Kali instala Hugo y ejecuta el servidor local desde la raíz del proyecto:
-
-```bash
-sudo apt update
-sudo apt install hugo
-hugo server -D
-```
-
-Abre la URL indicada por Hugo, normalmente `http://localhost:1313/`. Para producción, `draft` debe ser `false`.
+Contenido
+Sección	Descripción
+Write-ups	Resoluciones documentadas de CTFs, laboratorios y retos técnicos autorizados.
+Investigación	Investigaciones propias con metodología, fuentes, análisis y hallazgos.
+Bitácora	Reflexiones sobre aprendizaje, metodología y contexto técnico.
