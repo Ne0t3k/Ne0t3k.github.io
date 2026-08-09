@@ -1,22 +1,21 @@
-Portfolio técnico y bitácora de ciberseguridad.
+# Portfolio técnico y bitácora de ciberseguridad/OSINT.
 
 El sitio reúne write-ups de CTF, investigación técnica, reflexiones y proyectos relacionados con seguridad ofensiva, OSINT, ciberinteligencia, análisis de infraestructuras y automatización.
 
-Web: [ne0t3k.github.io](url)
+**Web:** [ne0t3k.github.io](https://ne0t3k.github.io/)
 
-Áreas de interés
-Seguridad ofensiva y red team
+## Áreas de interés
 
-Operaciones SOC, detección y respuesta ante incidentes
+- Seguridad ofensiva y red team
+- Operaciones SOC, detección y respuesta ante incidentes
+- OSINT y ciberinteligencia
+- Análisis de infraestructuras
+- Automatización aplicada a la investigación
 
-OSINT y ciberinteligencia
+## Contenido
 
-Análisis de infraestructuras
-
-Automatización aplicada a la investigación
-
-Contenido
-Sección	Descripción
-Write-ups	Resoluciones documentadas de CTFs, laboratorios y retos técnicos autorizados.
-Investigación	Investigaciones propias con metodología, fuentes, análisis y hallazgos.
-Bitácora	Reflexiones sobre aprendizaje, metodología y contexto técnico.
+| Sección | Descripción |
+| --- | --- |
+| [Write-ups](https://ne0t3k.github.io/writeups/) | Resoluciones documentadas de CTFs, laboratorios y retos técnicos autorizados. |
+| [Investigación](https://ne0t3k.github.io/investigaciones/) | Investigaciones propias con metodología, fuentes, análisis y hallazgos. |
+| [Bitácora](https://ne0t3k.github.io/reflexiones/) | Reflexiones sobre aprendizaje, metodología y contexto técnico. |
