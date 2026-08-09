@@ -1,0 +1,36 @@
+baseURL = "https://ne0t3k.github.io/"
+languageCode = "es-es"
+title = "Ne0t3k"
+enableRobotsTXT = true
+
+[taxonomies]
+  category = "categorias"
+  tag = "etiquetas"
+
+[params]
+  description = "Ciberseguridad, investigación, OSINT y CTFs."
+  author = "Ne0t3k"
+
+[permalinks]
+  writeups = "/writeups/:slug/"
+  investigaciones = "/investigaciones/:slug/"
+  reflexiones = "/reflexiones/:slug/"
+
+[related]
+  includeNewer = true
+  threshold = 20
+  toLower = true
+  [[related.indices]]
+    name = "etiquetas"
+    weight = 100
+  [[related.indices]]
+    name = "categorias"
+    weight = 80
+
+[markup]
+  [markup.highlight]
+    noClasses = false
+    lineNos = false
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 3

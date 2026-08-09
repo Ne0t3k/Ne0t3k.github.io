@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="{{ site.Language.LanguageCode }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ site.Params.description }}{{ end }}">
+  <title>{{ if .IsHome }}{{ site.Title }} | Ciberseguridad e investigación{{ else }}{{ .Title }} | {{ site.Title }}{{ end }}</title>
+  <link rel="stylesheet" href="{{ "css/main.css" | relURL }}">
+</head>
+<body>
+  <header class="site-header"><nav class="wrap nav">
+    <a class="brand" href="{{ site.Home.RelPermalink }}">NE0T3K<span>_</span></a>
+    <div class="nav-links">
+      <a href="{{ "#sobre-mi" | relURL }}">Sobre mí</a>
+      <a href="{{ "writeups/" | relURL }}">Write-ups</a>
+      <a href="{{ "investigaciones/" | relURL }}">Investigación</a>
+      <a href="{{ "reflexiones/" | relURL }}">Bitácora</a>
+      <a href="https://github.com/Ne0t3k" target="_blank" rel="noopener">GitHub ↗</a>
+    </div>
+  </nav></header>
+  <main>{{ block "main" . }}{{ end }}</main>
+  <footer><div class="wrap">© {{ now.Year }} Ne0t3k · Investigación, aprendizaje y seguridad responsable.</div></footer>
+</body>
+</html>

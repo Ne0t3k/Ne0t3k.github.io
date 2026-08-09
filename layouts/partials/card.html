@@ -1,0 +1,1 @@
+<article class="panel card"><p class="tag">{{ with .Params.plataforma }}{{ . }} · {{ end }}{{ .Section | humanize }}</p><h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3><p>{{ .Description | default .Summary }}</p><div class="card-meta">{{ .Date.Format "02/01/2006" }} · {{ .ReadingTime }} min</div><a class="read" href="{{ .RelPermalink }}">Leer publicación →</a></article>
