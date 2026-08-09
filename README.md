@@ -1,9 +1,8 @@
-Ne0t3k
-Portfolio técnico y bitácora de ciberseguridad de Ne0t3k.
+Portfolio técnico y bitácora de ciberseguridad.
 
 El sitio reúne write-ups de CTF, investigación técnica, reflexiones y proyectos relacionados con seguridad ofensiva, OSINT, ciberinteligencia, análisis de infraestructuras y automatización.
 
-Web: ne0t3k.github.io
+Web: [ne0t3k.github.io](url)
 
 Áreas de interés
 Seguridad ofensiva y red team
