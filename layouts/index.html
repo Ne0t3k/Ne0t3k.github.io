@@ -1,23 +1,137 @@
 {{ define "main" }}
 <section class="hero wrap">
-  <p class="eyebrow">Ciberseguridad · investigación · aprendizaje continuo</p>
-  <h1>Romper<br><span>Entender</span><br>Documentar</h1>
-  <p class="lead">Un espacio para compartir write-ups de CTF, investigación técnica, OSINT, ciberinteligencia y automatización aplicada a la seguridad.</p>
-  <div class="actions"><a class="button" href="#sobre-mi">Conoce mi perfil</a><a class="button outline" href="{{ "writeups/" | relURL }}">Explorar write-ups</a></div>
+  <p class="eyebrow">
+    Ciberseguridad · investigación · aprendizaje continuo
+  </p>
+
+  <h1>
+    Romper<br>
+    <span>Entender</span><br>
+    Documentar
+  </h1>
+
+  <p class="lead">
+    Experiencia defensiva. Mentalidad ofensiva. Investigación con propósito.
+  </p>
+
+  <div class="actions">
+    <a class="button" href="#sobre-mi">
+      Conoce mi perfil
+    </a>
+
+    <a class="button outline" href="{{ "writeups/" | relURL }}">
+      Explorar write-ups
+    </a>
+  </div>
 </section>
+
 <section class="wrap section" id="sobre-mi">
   <h2>Sobre mí</h2>
-  <div class="about-grid"><article class="panel prose">
-    <p>Soy Ne0t3k, profesional de ciberseguridad y curioso por naturaleza. Este espacio nace de una idea sencilla: entender cómo funcionan las cosas —y qué ocurre cuando fallan— para convertir ese aprendizaje en análisis útiles y compartibles.</p>
-    <p>Aquí documento la resolución de retos CTF, investigaciones propias, técnicas de OSINT, automatización y notas sobre seguridad ofensiva, infraestructuras y ciberinteligencia. Es una bitácora de procesos: hipótesis, pruebas, errores, hallazgos y conclusiones.</p>
-    <p class="notice">Contenido desarrollado exclusivamente en entornos autorizados, con fines formativos y de investigación.</p>
-  </article><aside class="terminal"><span class="prompt">ne0t3k@lab:~$</span> cat intereses.txt<br><br><span class="key">áreas:</span><br>seguridad ofensiva<br>osint y ciberinteligencia<br>análisis de infraestructura<br>automatización con python<br><br><span class="key">principio:</span> aprender · construir · compartir</aside></div>
+
+  <div class="about-grid">
+    <article class="panel prose">
+      <p>
+        Soy Ne0t3k, profesional de ciberseguridad con seis años de experiencia
+        en entornos SOC y defensa de sistemas. Mi trayectoria me ha permitido
+        desarrollar una visión práctica de la monitorización, la ingesta y el
+        análisis de fuentes, la detección de amenazas y la respuesta ante
+        incidentes.
+      </p>
+
+      <p>
+        Actualmente enfoco mi desarrollo en seguridad ofensiva y red team, sin
+        perder la perspectiva defensiva que aporta haber trabajado al otro lado:
+        entender cómo se detecta una técnica es fundamental para evaluar cómo se
+        comporta en un entorno real. También tengo especial interés en OSINT,
+        ciberinteligencia, análisis de infraestructuras y automatización aplicada
+        a la investigación.
+      </p>
+
+      <p class="notice">
+        Contenido elaborado exclusivamente en entornos autorizados, laboratorios
+        y retos CTF, con fines formativos y de investigación.
+      </p>
+    </article>
+
+    <aside class="terminal" aria-label="Perfil profesional">
+      <div>
+        <span class="prompt">ne0t3k@lab:~$</span> cat perfil.txt
+      </div>
+
+      <br>
+
+<div>
+  <span class="key">experiencia:</span>
+</div>
+
+<div class="out">
+  operaciones SOC<br>
+  detección, análisis y respuesta<br>
+  ingesta y correlación de fuentes
+</div>
+
+<br>
+
+<div>
+  <span class="key">áreas técnicas:</span>
+</div>
+
+<div class="out">
+  seguridad ofensiva y red team<br>
+  osint y ciberinteligencia<br>
+  análisis de infraestructuras<br>
+  automatización con python
+</div>
+
+<br>
+
+<div>
+  <span class="key">entorno:</span>
+  laboratorios, CTFs y sistemas autorizados
+</div>
 </section>
+
 {{ $pages := where site.RegularPages "Section" "in" (slice "writeups" "investigaciones" "reflexiones") }}
-<section class="wrap section"><h2>Últimas publicaciones</h2><div class="cards">{{ range first 3 $pages.ByDate.Reverse }}{{ partial "card.html" . }}{{ else }}<p class="empty">Todavía no hay publicaciones. Añade tu primer archivo Markdown en <code>content/writeups/</code>.</p>{{ end }}</div></section>
-<section class="wrap section"><h2>Explorar por sección</h2><div class="cards">
-  <a class="panel section-card" href="{{ "writeups/" | relURL }}"><b>Write-ups</b><span>CTFs, laboratorios y metodología.</span></a>
-  <a class="panel section-card" href="{{ "investigaciones/" | relURL }}"><b>Investigación</b><span>Hipótesis, fuentes, datos y hallazgos.</span></a>
-  <a class="panel section-card" href="{{ "reflexiones/" | relURL }}"><b>Bitácora</b><span>Ideas, contexto y aprendizaje continuo.</span></a>
-</div></section>
+
+<section class="wrap section" id="ultimas-publicaciones">
+  <h2>Últimas publicaciones</h2>
+
+  <div class="cards">
+    {{ range first 3 $pages.ByDate.Reverse }}
+      {{ partial "card.html" . }}
+    {{ else }}
+      <p class="empty">
+        Todavía no hay publicaciones. Añade tu primer archivo Markdown en
+        <code>content/writeups/</code>.
+      </p>
+    {{ end }}
+  </div>
+</section>
+
+<section class="wrap section" id="explorar">
+  <h2>Explorar por sección</h2>
+
+  <div class="cards">
+    <a class="panel section-card" href="{{ "writeups/" | relURL }}">
+      <b>Write-ups</b>
+      <span>
+        CTFs, laboratorios, metodología y lecciones aprendidas.
+      </span>
+    </a>
+
+    <a class="panel section-card" href="{{ "investigaciones/" | relURL }}">
+      <b>Investigación</b>
+      <span>
+        Hipótesis, fuentes, metodología, análisis y hallazgos propios.
+      </span>
+    </a>
+
+    <a class="panel section-card" href="{{ "reflexiones/" | relURL }}">
+      <b>Bitácora</b>
+      <span>
+        Ideas, contexto, aprendizaje continuo y criterio técnico.
+      </span>
+    </a>
+  </div>
+</section>
 {{ end }}
