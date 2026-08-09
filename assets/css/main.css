@@ -493,3 +493,31 @@ footer {
     padding-top: 2rem;
   }
 }
+
+/* ============================
+   Bloques de terminal para write-ups (comando + salida)
+   ============================ */
+.content pre.term-log {
+  padding: 1.1rem 1.25rem;
+  border: 1px solid var(--line);
+  background: var(--bg-deep);
+  color: var(--text);
+  overflow-x: auto;
+  font-size: 0.85rem;
+  line-height: 1.55;
+}
+
+.content pre.term-log .cmd {
+  color: var(--cyan);
+  font-weight: 700;
+}
+
+.content pre.term-log .hl {
+  color: var(--pink);
+  font-weight: 700;
+}
+
+.content pre.term-log .hl-green {
+  color: var(--lime);
+  font-weight: 700;
+}
