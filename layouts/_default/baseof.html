@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ site.Params.description }}{{ end }}">
   <title>{{ if .IsHome }}{{ site.Title }} | Ciberseguridad e investigación{{ else }}{{ .Title }} | {{ site.Title }}{{ end }}</title>
-  <link rel="stylesheet" href="{{ "css/main.css" | relURL }}">
+  {{ with resources.Get "css/main.css" }}
+<link rel="stylesheet" href="{{ .RelPermalink }}">
+{{ end }}
 </head>
 <body>
   <header class="site-header"><nav class="wrap nav">
