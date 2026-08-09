@@ -1,5 +1,5 @@
 ---
-title: "OPSEC para investigadores OSINT/SOCMINT: guía técnica"
+title: "OPSEC para investigadores"
 date: 2026-08-09
 draft: false
 tags: ["osint", "socmint", "opsec", "sock-puppets", "privacidad", "herramientas"]
