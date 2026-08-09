@@ -27,6 +27,7 @@ html {
 body {
   min-width: 320px;
   margin: 0;
+  overflow-x: hidden;
   color: var(--text);
   background:
     linear-gradient(rgba(56, 232, 255, 0.035) 1px, transparent 1px),
@@ -129,6 +130,8 @@ h1 span {
   font: 800 clamp(2.8rem, 5.5vw, 4.65rem) / 1 "Syne", sans-serif;
   letter-spacing: -0.06em;
   text-shadow: 0 0 28px rgba(161, 118, 255, 0.2);
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .article h1,
@@ -139,6 +142,8 @@ h1 span {
   line-height: 1;
   letter-spacing: -0.06em;
   text-shadow: 0 0 28px rgba(161, 118, 255, 0.2);
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .article h1 {
@@ -493,6 +498,21 @@ footer {
 
   .article {
     padding-top: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero h1 {
+    font-size: clamp(2.1rem, 11vw, 3rem);
+  }
+
+  .article h1,
+  .listing h1 {
+    font-size: clamp(1.85rem, 9vw, 2.6rem);
+  }
+
+  .lead {
+    font-size: 0.95rem;
   }
 }
 
