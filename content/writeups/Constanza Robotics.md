@@ -325,8 +325,6 @@ pperez@TheHackersLabs:~$ cat user.txt
 <span class="hl-green">THL{XXXXXXXXXXXXXXX}</span>
 </pre>
 
-![Acceso SSH como pperez y flag de usuario](/images/writeups/constanza-robotics/13-cap-setuid-privesc.png)
-
 ## Escalada de privilegios — Capability cap_setuid
 
 En vez de buscar binarios SUID, se enumeran capabilities de Linux asignadas directamente a ejecutables:
