@@ -519,7 +519,11 @@ footer {
 
 @media (max-width: 480px) {
   .hero h1 {
-    font-size: clamp(2.1rem, 11vw, 3rem);
+    font-size: clamp(1.8rem, 10vw, 2.45rem);
+    line-height: 1.02;
+    letter-spacing: -0.05em;
+    word-break: normal;
+    overflow-wrap: normal;
   }
 
   .article h1 {
