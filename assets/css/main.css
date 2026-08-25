@@ -212,10 +212,15 @@ h1 span {
   color: var(--pink);
 }
 
-.about-grid,
-.article-layout {
+.about-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+  gap: 1rem;
+}
+
+.article-layout {
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 1rem;
 }
 
@@ -375,11 +380,11 @@ h1 span {
 }
 
 .toc {
-  position: static;
+  order: -1;
+  margin-bottom: 1rem;
   padding: 0.95rem 0 0.95rem 1rem;
   border-left: 1px solid var(--pink);
   font-size: 0.76rem;
-  order: 2;
 }
 
 .toc nav ul {
@@ -396,8 +401,8 @@ h1 span {
 }
 
 .content {
+  order: 2;
   min-width: 0;
-  order: -1;
 }
 
 .content h2 {
@@ -493,7 +498,6 @@ footer {
   }
 
   .about-grid,
-  .article-layout,
   .cards,
   .post-list {
     grid-template-columns: 1fr;
