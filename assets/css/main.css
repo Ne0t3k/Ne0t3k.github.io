@@ -375,9 +375,7 @@ h1 span {
 }
 
 .toc {
-  position: sticky;
-  top: 95px;
-  align-self: start;
+  position: static;
   padding: 0.95rem 0 0.95rem 1rem;
   border-left: 1px solid var(--pink);
   font-size: 0.76rem;
@@ -428,6 +426,14 @@ h1 span {
   color: var(--cyan);
   text-decoration: underline;
   text-decoration-color: rgba(56, 232, 255, 0.45);
+}
+
+.content img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.2rem 0;
+  border: 1px solid var(--line);
 }
 
 .content pre {
