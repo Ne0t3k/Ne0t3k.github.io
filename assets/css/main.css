@@ -581,12 +581,8 @@ footer {
 /* ============================
    Resaltado de sintaxis para bloques de código (Chroma / Nmap, dig, bash…)
    ============================ */
-.content .highlight {
+.content pre.chroma {
   margin: 1.2rem 0;
-}
-
-.content .highlight pre {
-  margin: 0;
   padding: 1.1rem 1.25rem;
   border: 1px solid var(--line);
   background: var(--bg-deep);
@@ -595,57 +591,57 @@ footer {
   line-height: 1.6;
 }
 
-.content .highlight code {
+.content pre.chroma code {
   color: var(--text);
   background: none;
   padding: 0;
 }
 
 /* Comentarios (# ...) */
-.content .highlight .c,
-.content .highlight .c1,
-.content .highlight .cm {
+.content pre.chroma .c,
+.content pre.chroma .c1,
+.content pre.chroma .cm {
   color: var(--muted);
   font-style: italic;
 }
 
 /* Nombres de comando / binario (nmap, dig, whois, nc, telnet…) */
-.content .highlight .nb,
-.content .highlight .nf,
-.content .highlight .ne {
+.content pre.chroma .nb,
+.content pre.chroma .nf,
+.content pre.chroma .ne {
   color: var(--cyan);
   font-weight: 700;
 }
 
 /* Flags y opciones (-sS, --script, -oA…) */
-.content .highlight .o,
-.content .highlight .p {
+.content pre.chroma .o,
+.content pre.chroma .p {
   color: var(--pink);
 }
 
 /* Cadenas y argumentos entre comillas */
-.content .highlight .s,
-.content .highlight .s1,
-.content .highlight .s2 {
+.content pre.chroma .s,
+.content pre.chroma .s1,
+.content pre.chroma .s2 {
   color: var(--lime);
 }
 
 /* Números, puertos, rangos IP */
-.content .highlight .mi,
-.content .highlight .m {
+.content pre.chroma .mi,
+.content pre.chroma .m {
   color: var(--orange);
 }
 
 /* Palabras clave del shell (if, for, use, set…) */
-.content .highlight .k,
-.content .highlight .kn,
-.content .highlight .kd {
+.content pre.chroma .k,
+.content pre.chroma .kn,
+.content pre.chroma .kd {
   color: var(--label);
   font-weight: 700;
 }
 
 /* Variables y nombres genéricos sin resaltar de forma especial */
-.content .highlight .nv,
-.content .highlight .n {
+.content pre.chroma .nv,
+.content pre.chroma .n {
   color: var(--text);
 }
