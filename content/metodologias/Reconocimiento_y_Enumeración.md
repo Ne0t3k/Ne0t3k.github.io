@@ -48,18 +48,14 @@ El reconocimiento pasivo recopila información sin contacto directo con los sist
 
 Ejemplos de comandos y búsquedas reales:
 
-```bash
-# WHOIS de un dominio en consola
-whois dominio.com
+<pre class="cmd-block"><code><span class="comment"># WHOIS de un dominio en consola</span>
+<span class="tool">whois</span> dominio.com
 
-# WHOIS de una IP
-whois 8.8.8.8
-```
+<span class="comment"># WHOIS de una IP</span>
+<span class="tool">whois</span> 8.8.8.8</code></pre>
 
-```
-# Búsqueda en Shodan de dispositivos SNMP expuestos en España
-port:161 country:es
-```
+<pre class="cmd-block"><code><span class="comment"># Búsqueda en Shodan de dispositivos SNMP expuestos en España</span>
+port:161 country:es</code></pre>
 
 Un matiz relevante en WHOIS: gran parte de los dominios actuales usan protección de privacidad (Contact Privacy, WhoisProxy), por lo que los datos de contacto reales pueden estar enmascarados por el proveedor de privacidad del registrador.
 
@@ -77,11 +73,9 @@ El reconocimiento activo implica generar tráfico hacia el objetivo, lo que lo h
 | Sniffing pasivo | Captura de tráfico broadcast o de todo el segmento | Identifica hosts activos sin enviar sondas propias | En red cableada, limitado a tráfico broadcast; en inalámbrica es más efectivo |
 | Traceo de red | Manipulación del TTL/Hop Limit | Revela topología y routers intermedios | No identifica hosts finales, solo saltos de red |
 
-```bash
-# Traceo de red
-traceroute dominio.com     # Linux
-tracert dominio.com        # Windows
-```
+<pre class="cmd-block"><code><span class="comment"># Traceo de red</span>
+<span class="tool">traceroute</span> dominio.com     <span class="comment"># Linux</span>
+<span class="tool">tracert</span> dominio.com        <span class="comment"># Windows</span></code></pre>
 
 ### 4. Fundamentos del escaneo de puertos TCP/UDP
 
@@ -104,9 +98,7 @@ Esta ambigüedad hace que los escaneos UDP sean intrínsecamente más lentos y m
 
 Nmap es el estándar de facto para el reconocimiento activo. Su sintaxis general es:
 
-```bash
-nmap [Técnicas] [Opciones] [Objetivos]
-```
+<pre class="cmd-block"><code><span class="tool">nmap</span> [Técnicas] [Opciones] [Objetivos]</code></pre>
 
 Los objetivos aceptan IP única, rangos con guion, notación CIDR o dominios: `192.168.10.10`, `172.16.128-130.0-255`, `10.0.0.0/16`, `www.dominio.com/28`.
 
@@ -114,131 +106,121 @@ Los objetivos aceptan IP única, rangos con guion, notación CIDR o dominios: `1
 
 Determinan qué máquinas de un rango están activas antes de invertir tiempo escaneando puertos.
 
-```bash
-# NO PING: trata todos los objetivos como activos, salta el descubrimiento
-nmap -Pn 192.168.1.0/24
+<pre class="cmd-block"><code><span class="comment"># NO PING: trata todos los objetivos como activos, salta el descubrimiento</span>
+<span class="tool">nmap</span> <span class="flag">-Pn</span> 192.168.1.0/24
 
-# LIST SCAN: solo lista objetivos y hace resolución DNS inversa, sin enviar sondas
-nmap -sL -v www.dominio.es/24
+<span class="comment"># LIST SCAN: solo lista objetivos y hace resolución DNS inversa, sin enviar sondas</span>
+<span class="tool">nmap</span> <span class="flag">-sL</span> <span class="flag">-v</span> www.dominio.es/24
 
-# PING SCAN (Ping Sweep): descubre hosts activos sin escanear puertos
-nmap -sn -v www.dominio.es/24
-nmap -sn 192.168.1.0/24
+<span class="comment"># PING SCAN (Ping Sweep): descubre hosts activos sin escanear puertos</span>
+<span class="tool">nmap</span> <span class="flag">-sn</span> <span class="flag">-v</span> www.dominio.es/24
+<span class="tool">nmap</span> <span class="flag">-sn</span> 192.168.1.0/24
 
-# PING ARP: automático en red local, muy rápido (no requiere invocación explícita)
-# Se puede forzar el uso de IP en vez de ARP con:
-nmap -sn --send-ip 192.168.1.0/24
+<span class="comment"># PING ARP: automático en red local, muy rápido (no requiere invocación explícita)</span>
+<span class="comment"># Se puede forzar el uso de IP en vez de ARP con:</span>
+<span class="tool">nmap</span> <span class="flag">-sn</span> <span class="flag">--send-ip</span> 192.168.1.0/24
 
-# PING TCP SYN a un puerto o lista de puertos (por defecto, puerto 80)
-nmap -sn -PS -v www.dominio.es/24
-nmap -sn -PS22-25,80,443,8080 192.168.1.0/24
+<span class="comment"># PING TCP SYN a un puerto o lista de puertos (por defecto, puerto 80)</span>
+<span class="tool">nmap</span> <span class="flag">-sn</span> <span class="flag">-PS</span> <span class="flag">-v</span> www.dominio.es/24
+<span class="tool">nmap</span> <span class="flag">-sn</span> <span class="flag">-PS22-25,80,443,8080</span> 192.168.1.0/24
 
-# PING TCP ACK (complementa a PS frente a firewalls sin estado)
-nmap -sn -PA -v www.dominio.es/24
-nmap -sn -PA80,443 192.168.1.0/24
+<span class="comment"># PING TCP ACK (complementa a PS frente a firewalls sin estado)</span>
+<span class="tool">nmap</span> <span class="flag">-sn</span> <span class="flag">-PA</span> <span class="flag">-v</span> www.dominio.es/24
+<span class="tool">nmap</span> <span class="flag">-sn</span> <span class="flag">-PA80,443</span> 192.168.1.0/24
 
-# PING UDP a un puerto que se espera cerrado (por defecto, 31338)
-nmap -sn -PU 192.168.1.0/24
+<span class="comment"># PING UDP a un puerto que se espera cerrado (por defecto, 31338)</span>
+<span class="tool">nmap</span> <span class="flag">-sn</span> <span class="flag">-PU</span> 192.168.1.0/24
 
-# PING ICMP Echo / Timestamp / Addressmask
-nmap -sn -PE -v www.dominio.es/24
-nmap -sn -PP 192.168.1.0/24
-nmap -sn -PM 192.168.1.0/24
+<span class="comment"># PING ICMP Echo / Timestamp / Addressmask</span>
+<span class="tool">nmap</span> <span class="flag">-sn</span> <span class="flag">-PE</span> <span class="flag">-v</span> www.dominio.es/24
+<span class="tool">nmap</span> <span class="flag">-sn</span> <span class="flag">-PP</span> 192.168.1.0/24
+<span class="tool">nmap</span> <span class="flag">-sn</span> <span class="flag">-PM</span> 192.168.1.0/24
 
-# PING SCTP (handshake INIT / INIT-ACK / COOKIE-ECHO / COOKIE-ACK)
-nmap -PY 192.168.1.0/24
+<span class="comment"># PING SCTP (handshake INIT / INIT-ACK / COOKIE-ECHO / COOKIE-ACK)</span>
+<span class="tool">nmap</span> <span class="flag">-PY</span> 192.168.1.0/24
 
-# IP PROTOCOL PING: sondas con protocolos concretos en cabecera IP
-nmap -PO 192.168.1.0/24
-nmap -PO1,2,4 192.168.1.0/24
-```
+<span class="comment"># IP PROTOCOL PING: sondas con protocolos concretos en cabecera IP</span>
+<span class="tool">nmap</span> <span class="flag">-PO</span> 192.168.1.0/24
+<span class="tool">nmap</span> <span class="flag">-PO1,2,4</span> 192.168.1.0/24</code></pre>
 
 Si no se especifica ninguna opción de descubrimiento y el usuario tiene privilegios administrativos, Nmap combina por defecto `-PA80`, `-PS443`, un ICMP Echo Request y un ICMP Timestamp Request; si el objetivo pertenece a la red local, usa directamente resolución ARP.
 
 Ejemplo práctico de configuración completa para descubrimiento en una subred:
 
-```bash
-# 1. Obtención de nombres de máquina de los objetivos
-nmap -sL -v www.dominio.es/24
+<pre class="cmd-block"><code><span class="comment"># 1. Obtención de nombres de máquina de los objetivos</span>
+<span class="tool">nmap</span> <span class="flag">-sL</span> <span class="flag">-v</span> www.dominio.es/24
 
-# 2. Determinación del estado de las máquinas (combina PA80, PS443, PE y PP)
-nmap -sn -v www.dominio.es/24
-```
+<span class="comment"># 2. Determinación del estado de las máquinas (combina PA80, PS443, PE y PP)</span>
+<span class="tool">nmap</span> <span class="flag">-sn</span> <span class="flag">-v</span> www.dominio.es/24</code></pre>
 
 #### 5.2. Técnicas de escaneo de puertos
 
 Cada técnica interpreta de forma distinta las respuestas del objetivo, con implicaciones directas en fiabilidad y sigilo.
 
-```bash
-# TCP SYN Scan (Half-Open): técnica por defecto con privilegios, rápida y sigilosa
-nmap -sS 192.168.1.10
-nmap -sS -sV 192.168.1.10          # combinada con detección de versión
+<pre class="cmd-block"><code><span class="comment"># TCP SYN Scan (Half-Open): técnica por defecto con privilegios, rápida y sigilosa</span>
+<span class="tool">nmap</span> <span class="flag">-sS</span> 192.168.1.10
+<span class="tool">nmap</span> <span class="flag">-sS</span> <span class="flag">-sV</span> 192.168.1.10          <span class="comment"># combinada con detección de versión</span>
 
-# TCP Connect Scan: usada sin privilegios; completa la conexión (queda en logs)
-nmap -sT 192.168.1.10
+<span class="comment"># TCP Connect Scan: usada sin privilegios; completa la conexión (queda en logs)</span>
+<span class="tool">nmap</span> <span class="flag">-sT</span> 192.168.1.10
 
-# UDP Scan: lento por naturaleza del protocolo
-nmap -sU 192.168.1.10
-nmap -sU -sV --version-intensity 0 192.168.1.10   # reduce el tiempo de -sV en UDP
+<span class="comment"># UDP Scan: lento por naturaleza del protocolo</span>
+<span class="tool">nmap</span> <span class="flag">-sU</span> 192.168.1.10
+<span class="tool">nmap</span> <span class="flag">-sU</span> <span class="flag">-sV</span> <span class="flag">--version-intensity</span> 0 192.168.1.10   <span class="comment"># reduce el tiempo de -sV en UDP</span>
 
-# TCP ACK Scan: no distingue abierto/cerrado, solo filtrado/no filtrado (mapea firewall)
-nmap -sA 192.168.1.10
+<span class="comment"># TCP ACK Scan: no distingue abierto/cerrado, solo filtrado/no filtrado (mapea firewall)</span>
+<span class="tool">nmap</span> <span class="flag">-sA</span> 192.168.1.10
 
-# Null, FIN y Xmas Scan: explotan una ambigüedad del RFC 793
-nmap -sN 192.168.1.10
-nmap -sF 192.168.1.10
-nmap -sX 192.168.1.10
+<span class="comment"># Null, FIN y Xmas Scan: explotan una ambigüedad del RFC 793</span>
+<span class="tool">nmap</span> <span class="flag">-sN</span> 192.168.1.10
+<span class="tool">nmap</span> <span class="flag">-sF</span> 192.168.1.10
+<span class="tool">nmap</span> <span class="flag">-sX</span> 192.168.1.10
 
-# Combinación de flags personalizada
-nmap --scanflags SYN,ACK 192.168.1.10
+<span class="comment"># Combinación de flags personalizada</span>
+<span class="tool">nmap</span> <span class="flag">--scanflags</span> SYN,ACK 192.168.1.10
 
-# TCP Maimon Scan (flags FIN+ACK)
-nmap -sM 192.168.1.10
+<span class="comment"># TCP Maimon Scan (flags FIN+ACK)</span>
+<span class="tool">nmap</span> <span class="flag">-sM</span> 192.168.1.10
 
-# TCP Window Scan (variante de ACK que sí distingue abierto/cerrado)
-nmap -sW 192.168.1.10
+<span class="comment"># TCP Window Scan (variante de ACK que sí distingue abierto/cerrado)</span>
+<span class="tool">nmap</span> <span class="flag">-sW</span> 192.168.1.10
 
-# Idle Scan: el más sigiloso, requiere un equipo "zombie" con IP-ID predecible
-nmap -sI <IP_zombie> 192.168.1.10
+<span class="comment"># Idle Scan: el más sigiloso, requiere un equipo "zombie" con IP-ID predecible</span>
+<span class="tool">nmap</span> <span class="flag">-sI</span> &lt;IP_zombie&gt; 192.168.1.10
 
-# Búsqueda de un zombie válido en una subred
-nmap -P0 -sN -n -v -p 80 --scanflags SYN,ACK <subred_objetivo>
+<span class="comment"># Búsqueda de un zombie válido en una subred</span>
+<span class="tool">nmap</span> <span class="flag">-P0</span> <span class="flag">-sN</span> <span class="flag">-n</span> <span class="flag">-v</span> <span class="flag">-p</span> 80 <span class="flag">--scanflags</span> SYN,ACK &lt;subred_objetivo&gt;
 
-# SCTP INIT y COOKIE-ECHO Scan
-nmap -sY 192.168.1.10
-nmap -sZ 192.168.1.10
+<span class="comment"># SCTP INIT y COOKIE-ECHO Scan</span>
+<span class="tool">nmap</span> <span class="flag">-sY</span> 192.168.1.10
+<span class="tool">nmap</span> <span class="flag">-sZ</span> 192.168.1.10
 
-# IP Protocol Scan: enumera protocolos de transporte soportados, no puertos
-nmap -sO 192.168.1.10
-```
+<span class="comment"># IP Protocol Scan: enumera protocolos de transporte soportados, no puertos</span>
+<span class="tool">nmap</span> <span class="flag">-sO</span> 192.168.1.10</code></pre>
 
 Ejemplos prácticos de descubrimiento inicial encadenado con escaneo:
 
-```bash
-# Ping sweep para descubrir hosts activos en una red corporativa
-nmap -sn 192.168.1.0/24
+<pre class="cmd-block"><code><span class="comment"># Ping sweep para descubrir hosts activos en una red corporativa</span>
+<span class="tool">nmap</span> <span class="flag">-sn</span> 192.168.1.0/24
 
-# Escaneo de los primeros 1000 puertos de un host activo
-nmap -p 1-1000 192.168.1.10
+<span class="comment"># Escaneo de los primeros 1000 puertos de un host activo</span>
+<span class="tool">nmap</span> <span class="flag">-p</span> 1-1000 192.168.1.10
 
-# Fingerprinting de servicios y SO en un mismo comando
-nmap -sV -O 192.168.1.10
-```
+<span class="comment"># Fingerprinting de servicios y SO en un mismo comando</span>
+<span class="tool">nmap</span> <span class="flag">-sV</span> <span class="flag">-O</span> 192.168.1.10</code></pre>
 
 #### 5.3. Detección de versión y sistema operativo
 
-```bash
-# Detección de versión de servicios, con control de intensidad (0-9, por defecto 7)
-nmap -sV 192.168.1.10
-nmap -sV --version-intensity 0 192.168.1.10   # solo sondas más comunes, más rápido
-nmap -sV --version-intensity 9 192.168.1.10   # todas las sondas disponibles
+<pre class="cmd-block"><code><span class="comment"># Detección de versión de servicios, con control de intensidad (0-9, por defecto 7)</span>
+<span class="tool">nmap</span> <span class="flag">-sV</span> 192.168.1.10
+<span class="tool">nmap</span> <span class="flag">-sV</span> <span class="flag">--version-intensity</span> 0 192.168.1.10   <span class="comment"># solo sondas más comunes, más rápido</span>
+<span class="tool">nmap</span> <span class="flag">-sV</span> <span class="flag">--version-intensity</span> 9 192.168.1.10   <span class="comment"># todas las sondas disponibles</span>
 
-# Detección de sistema operativo (compara con base de firmas de la pila TCP/IP)
-nmap -O 192.168.1.10
+<span class="comment"># Detección de sistema operativo (compara con base de firmas de la pila TCP/IP)</span>
+<span class="tool">nmap</span> <span class="flag">-O</span> 192.168.1.10
 
-# Atajo agresivo: combina -O, -sV, -sC (scripts por defecto) y --traceroute
-nmap -A 192.168.1.10
-```
+<span class="comment"># Atajo agresivo: combina -O, -sV, -sC (scripts por defecto) y --traceroute</span>
+<span class="tool">nmap</span> <span class="flag">-A</span> 192.168.1.10</code></pre>
 
 `-A` es exhaustivo pero incrementa notablemente el tiempo de análisis en redes lentas o congestionadas; conviene reservarlo para objetivos ya acotados, no para rangos completos.
 
@@ -246,31 +228,29 @@ nmap -A 192.168.1.10
 
 NSE ejecuta scripts en Lua contra los objetivos, ampliando Nmap a detección de vulnerabilidades, fuerza bruta o enumeración avanzada. Los scripts se ubican en `/usr/share/nmap/scripts/`.
 
-```bash
-# Ejecutar los scripts por defecto para cada servicio descubierto
-nmap -sC 192.168.1.10
+<pre class="cmd-block"><code><span class="comment"># Ejecutar los scripts por defecto para cada servicio descubierto</span>
+<span class="tool">nmap</span> <span class="flag">-sC</span> 192.168.1.10
 
-# Ejecutar un script concreto
-nmap --script smtp-enum-users.nse 192.168.1.10 -p 25
+<span class="comment"># Ejecutar un script concreto</span>
+<span class="tool">nmap</span> <span class="flag">--script</span> smtp-enum-users.nse 192.168.1.10 <span class="flag">-p</span> 25
 
-# Pasar argumentos a un script
-nmap --script asn-query.nse --script-args dns=8.8.8.8 111.222.111.222
+<span class="comment"># Pasar argumentos a un script</span>
+<span class="tool">nmap</span> <span class="flag">--script</span> asn-query.nse <span class="flag">--script-args</span> dns=8.8.8.8 111.222.111.222
 
-# Ejecutar por categoría
-nmap -T4 -p80 --script discovery 192.168.100.1/24
+<span class="comment"># Ejecutar por categoría</span>
+<span class="tool">nmap</span> <span class="flag">-T4</span> <span class="flag">-p80</span> <span class="flag">--script</span> discovery 192.168.100.1/24
 
-# Combinar categorías con condicionales, comodines y negación
-nmap -T4 -p80 --script "discovery,safe" 192.168.100.1/24
-nmap -T4 -p80 --script "discovery and safe" 192.168.100.1/24
-nmap -T4 -p80 --script "not safe" 192.168.100.1/24
-nmap -T4 -p80 --script "http-*" 192.168.100.1/24
+<span class="comment"># Combinar categorías con condicionales, comodines y negación</span>
+<span class="tool">nmap</span> <span class="flag">-T4</span> <span class="flag">-p80</span> <span class="flag">--script</span> "discovery,safe" 192.168.100.1/24
+<span class="tool">nmap</span> <span class="flag">-T4</span> <span class="flag">-p80</span> <span class="flag">--script</span> "discovery and safe" 192.168.100.1/24
+<span class="tool">nmap</span> <span class="flag">-T4</span> <span class="flag">-p80</span> <span class="flag">--script</span> "not safe" 192.168.100.1/24
+<span class="tool">nmap</span> <span class="flag">-T4</span> <span class="flag">-p80</span> <span class="flag">--script</span> "http-*" 192.168.100.1/24
 
-# Comprobación de vulnerabilidades SMB (algunas pruebas son intrusivas)
-nmap --script smb-check-vulns 192.168.1.23
+<span class="comment"># Comprobación de vulnerabilidades SMB (algunas pruebas son intrusivas)</span>
+<span class="tool">nmap</span> <span class="flag">--script</span> smb-check-vulns 192.168.1.23
 
-# DNS cache snooping vía script NSE
-nmap --script dns-cache-snoop 8.8.8.8
-```
+<span class="comment"># DNS cache snooping vía script NSE</span>
+<span class="tool">nmap</span> <span class="flag">--script</span> dns-cache-snoop 8.8.8.8</code></pre>
 
 Cada script sigue reglas de ejecución: `prerule` (una vez, antes de escanear ningún host), `hostrule`/`portrule` (justo después de escanear un host o puerto concreto) y `postrule` (al finalizar todos los hosts pendientes). Internamente, Nmap expone estructuras `host` y `port` con campos como `host.os`, `host.ip`, `host.name`, `port.state`, `port.service`, `port.version.product` o `port.version.name`, que los scripts consultan para decidir si ejecutarse y qué mostrar. El campo `port.state` en las reglas de un script solo puede ser `open` u `open|filtered`, ya que NSE no lanza scripts sobre puertos cerrados.
 
@@ -282,55 +262,51 @@ Ejemplos reales de scripts citados en la formación:
 
 #### 5.5. Optimización de rendimiento y sigilo
 
-```bash
-# Plantillas temporales: de -T0 (paranoid, máximo sigilo) a -T5 (insane, máxima velocidad)
-nmap -T0 192.168.1.10    # evita alertas IDS, muy lento
-nmap -T1 192.168.1.10    # sneaky
-nmap -T3 192.168.1.10    # normal (comportamiento por defecto)
-nmap -T4 192.168.1.10    # recomendado en redes locales / banda ancha
-nmap -T5 192.168.1.10    # solo en redes muy rápidas y poco congestionadas
+<pre class="cmd-block"><code><span class="comment"># Plantillas temporales: de -T0 (paranoid, máximo sigilo) a -T5 (insane, máxima velocidad)</span>
+<span class="tool">nmap</span> <span class="flag">-T0</span> 192.168.1.10    <span class="comment"># evita alertas IDS, muy lento</span>
+<span class="tool">nmap</span> <span class="flag">-T1</span> 192.168.1.10    <span class="comment"># sneaky</span>
+<span class="tool">nmap</span> <span class="flag">-T3</span> 192.168.1.10    <span class="comment"># normal (comportamiento por defecto)</span>
+<span class="tool">nmap</span> <span class="flag">-T4</span> 192.168.1.10    <span class="comment"># recomendado en redes locales / banda ancha</span>
+<span class="tool">nmap</span> <span class="flag">-T5</span> 192.168.1.10    <span class="comment"># solo en redes muy rápidas y poco congestionadas</span>
 
-# Control fino de tasas y reintentos
-nmap --min-rate 500 --max-rate 1000 192.168.1.10
-nmap --max-retries 2 192.168.1.10
-nmap --host-timeout 30s 192.168.1.10
-nmap --scan-delay 1s --max-scan-delay 5s 192.168.1.10
+<span class="comment"># Control fino de tasas y reintentos</span>
+<span class="tool">nmap</span> <span class="flag">--min-rate</span> 500 <span class="flag">--max-rate</span> 1000 192.168.1.10
+<span class="tool">nmap</span> <span class="flag">--max-retries</span> 2 192.168.1.10
+<span class="tool">nmap</span> <span class="flag">--host-timeout</span> 30s 192.168.1.10
+<span class="tool">nmap</span> <span class="flag">--scan-delay</span> 1s <span class="flag">--max-scan-delay</span> 5s 192.168.1.10
 
-# Control de paralelismo
-nmap --min-parallelism 10 --max-parallelism 50 192.168.1.0/24
-nmap --min-hostgroup 20 --max-hostgroup 100 192.168.1.0/24
+<span class="comment"># Control de paralelismo</span>
+<span class="tool">nmap</span> <span class="flag">--min-parallelism</span> 10 <span class="flag">--max-parallelism</span> 50 192.168.1.0/24
+<span class="tool">nmap</span> <span class="flag">--min-hostgroup</span> 20 <span class="flag">--max-hostgroup</span> 100 192.168.1.0/24
 
-# Acotar el alcance antes de optimizar tiempos: la optimización más rentable
-nmap -F 192.168.1.10                 # Fast Scan: 100 puertos más comunes
-nmap --top-ports 50 192.168.1.10     # los 50 puertos más frecuentes
-nmap -p 22,80,443,6666-7000,8080,8443 192.168.1.10   # lista/rango personalizado
-nmap -p U:53,111,T:21-25,80,139,S:9 192.168.1.10      # mezclando UDP/TCP/SCTP
-nmap -p- 192.168.1.10                # los 65535 puertos, cuesta mucho tiempo
+<span class="comment"># Acotar el alcance antes de optimizar tiempos: la optimización más rentable</span>
+<span class="tool">nmap</span> <span class="flag">-F</span> 192.168.1.10                 <span class="comment"># Fast Scan: 100 puertos más comunes</span>
+<span class="tool">nmap</span> <span class="flag">--top-ports</span> 50 192.168.1.10     <span class="comment"># los 50 puertos más frecuentes</span>
+<span class="tool">nmap</span> <span class="flag">-p</span> 22,80,443,6666-7000,8080,8443 192.168.1.10   <span class="comment"># lista/rango personalizado</span>
+<span class="tool">nmap</span> <span class="flag">-p</span> U:53,111,T:21-25,80,139,S:9 192.168.1.10      <span class="comment"># mezclando UDP/TCP/SCTP</span>
+<span class="tool">nmap</span> <span class="flag">-p-</span> 192.168.1.10                <span class="comment"># los 65535 puertos, cuesta mucho tiempo</span>
 
-# Técnicas de evasión de firewalls / IDS
-nmap -f 192.168.1.10                            # fragmentación de paquetes
-nmap --mtu 16 192.168.1.10                      # tamaño de fragmento personalizado
-nmap -D señuelo1,señuelo2,ME 192.168.1.10       # señuelos para enmascarar el origen
-nmap -S 10.0.0.5 -e eth0 192.168.1.10           # IP de origen falsa e interfaz concreta
-nmap --source-port 53 192.168.1.10              # falsificación del puerto de origen
-nmap --data-length 25 192.168.1.10              # relleno aleatorio de paquetes
-nmap --spoof-mac 0 192.168.1.10                 # MAC aleatoria
-nmap --spoof-mac Apple 192.168.1.10             # MAC con prefijo de fabricante
-nmap --randomize-hosts 192.168.1.0/24           # orden aleatorio de objetivos
-nmap --badsum 192.168.1.10                      # checksum incorrecto (detecta validación en IDS)
+<span class="comment"># Técnicas de evasión de firewalls / IDS</span>
+<span class="tool">nmap</span> <span class="flag">-f</span> 192.168.1.10                            <span class="comment"># fragmentación de paquetes</span>
+<span class="tool">nmap</span> <span class="flag">--mtu</span> 16 192.168.1.10                      <span class="comment"># tamaño de fragmento personalizado</span>
+<span class="tool">nmap</span> <span class="flag">-D</span> señuelo1,señuelo2,ME 192.168.1.10       <span class="comment"># señuelos para enmascarar el origen</span>
+<span class="tool">nmap</span> <span class="flag">-S</span> 10.0.0.5 <span class="flag">-e</span> eth0 192.168.1.10           <span class="comment"># IP de origen falsa e interfaz concreta</span>
+<span class="tool">nmap</span> <span class="flag">--source-port</span> 53 192.168.1.10              <span class="comment"># falsificación del puerto de origen</span>
+<span class="tool">nmap</span> <span class="flag">--data-length</span> 25 192.168.1.10              <span class="comment"># relleno aleatorio de paquetes</span>
+<span class="tool">nmap</span> <span class="flag">--spoof-mac</span> 0 192.168.1.10                 <span class="comment"># MAC aleatoria</span>
+<span class="tool">nmap</span> <span class="flag">--spoof-mac</span> Apple 192.168.1.10             <span class="comment"># MAC con prefijo de fabricante</span>
+<span class="tool">nmap</span> <span class="flag">--randomize-hosts</span> 192.168.1.0/24           <span class="comment"># orden aleatorio de objetivos</span>
+<span class="tool">nmap</span> <span class="flag">--badsum</span> 192.168.1.10                      <span class="comment"># checksum incorrecto (detecta validación en IDS)</span>
 
-# Salida de resultados en distintos formatos
-nmap -oN salida.txt 192.168.1.10     # normal
-nmap -oX salida.xml 192.168.1.10     # XML
-nmap -oG salida.gnmap 192.168.1.10   # grepable
-nmap -oA analisis 192.168.1.10       # normal + grepable + XML en un solo comando
-```
+<span class="comment"># Salida de resultados en distintos formatos</span>
+<span class="tool">nmap</span> <span class="flag">-oN</span> salida.txt 192.168.1.10     <span class="comment"># normal</span>
+<span class="tool">nmap</span> <span class="flag">-oX</span> salida.xml 192.168.1.10     <span class="comment"># XML</span>
+<span class="tool">nmap</span> <span class="flag">-oG</span> salida.gnmap 192.168.1.10   <span class="comment"># grepable</span>
+<span class="tool">nmap</span> <span class="flag">-oA</span> analisis 192.168.1.10       <span class="comment"># normal + grepable + XML en un solo comando</span></code></pre>
 
 En redes locales con firewalls stateful e IDS/IPS activos, la combinación práctica más habitual para reducir ruido es encadenar plantilla temporal baja, control de reintentos y fragmentación:
 
-```bash
-nmap -sS -T1 -f --max-retries 1 --scan-delay 2s 192.168.1.10
-```
+<pre class="cmd-block"><code><span class="tool">nmap</span> <span class="flag">-sS</span> <span class="flag">-T1</span> <span class="flag">-f</span> <span class="flag">--max-retries</span> 1 <span class="flag">--scan-delay</span> 2s 192.168.1.10</code></pre>
 
 ### 6. Enumeración de servicios
 
@@ -338,41 +314,39 @@ Una vez identificados los puertos abiertos y sus versiones, la enumeración busc
 
 **DNS**, con la herramienta `dig`:
 
-```bash
-# Consulta estándar (registro A por defecto)
-dig dominio.com
+<pre class="cmd-block"><code><span class="comment"># Consulta estándar (registro A por defecto)</span>
+<span class="tool">dig</span> dominio.com
 
-# Respuesta abreviada
-dig dominio.com +short
+<span class="comment"># Respuesta abreviada</span>
+<span class="tool">dig</span> dominio.com <span class="flag">+short</span>
 
-# Solo la sección de respuestas
-dig dominio.com +noall +answer
+<span class="comment"># Solo la sección de respuestas</span>
+<span class="tool">dig</span> dominio.com <span class="flag">+noall</span> <span class="flag">+answer</span>
 
-# Consulta contra un servidor DNS concreto
-dig @8.8.8.8 dominio.com
+<span class="comment"># Consulta contra un servidor DNS concreto</span>
+<span class="tool">dig</span> @8.8.8.8 dominio.com
 
-# Todos los tipos de registro disponibles
-dig dominio.com ANY
+<span class="comment"># Todos los tipos de registro disponibles</span>
+<span class="tool">dig</span> dominio.com ANY
 
-# Tipos de registro específicos
-dig dominio.com MX
-dig dominio.com txt
-dig dominio.com cname
-dig dominio.com ns
-dig dominio.com A
+<span class="comment"># Tipos de registro específicos</span>
+<span class="tool">dig</span> dominio.com MX
+<span class="tool">dig</span> dominio.com txt
+<span class="tool">dig</span> dominio.com cname
+<span class="tool">dig</span> dominio.com ns
+<span class="tool">dig</span> dominio.com A
 
-# Resolución iterativa desde la raíz
-dig dominio.com +trace
+<span class="comment"># Resolución iterativa desde la raíz</span>
+<span class="tool">dig</span> dominio.com <span class="flag">+trace</span>
 
-# Resolución inversa (requiere registro PTR)
-dig +answer -x 212.170.36.79
+<span class="comment"># Resolución inversa (requiere registro PTR)</span>
+<span class="tool">dig</span> <span class="flag">+answer</span> <span class="flag">-x</span> 212.170.36.79
 
-# Consultas por lotes desde un fichero (un dominio por línea)
-dig -f nombre_dominio.txt +short
+<span class="comment"># Consultas por lotes desde un fichero (un dominio por línea)</span>
+<span class="tool">dig</span> <span class="flag">-f</span> nombre_dominio.txt <span class="flag">+short</span>
 
-# Configuración persistente de opciones por defecto
-echo "+noall +answer" > ~/.digrc
-```
+<span class="comment"># Configuración persistente de opciones por defecto</span>
+<span class="tool">echo</span> "+noall +answer" &gt; ~/.digrc</code></pre>
 
 **DNS Cache Snooping** permite inferir qué dominios ha consultado previamente una organización, útil para perfilar hábitos de navegación de cara a phishing dirigido:
 
@@ -383,52 +357,48 @@ echo "+noall +answer" > ~/.digrc
 
 **SMTP**, con los comandos del propio protocolo (HELO/EHLO, VRFY, EXPN, RCPT TO, STARTTLS, DATA, MAIL, RSET, QUIT, HELP, AUTH):
 
-```bash
-# Identificación del banner
-nc 192.168.1.15 25
-telnet 192.168.1.15 25
-nmap -sV -p25 192.168.1.15
-nmap -sV -p25 192.168.1.15 --script=banner
+<pre class="cmd-block"><code><span class="comment"># Identificación del banner</span>
+<span class="tool">nc</span> 192.168.1.15 25
+<span class="tool">telnet</span> 192.168.1.15 25
+<span class="tool">nmap</span> <span class="flag">-sV</span> <span class="flag">-p25</span> 192.168.1.15
+<span class="tool">nmap</span> <span class="flag">-sV</span> <span class="flag">-p25</span> 192.168.1.15 <span class="flag">--script=banner</span>
 
-# Vía Metasploit
-use auxiliary/scanner/smtp/smtp_version
-set RHOSTS 192.168.1.15
-run
+<span class="comment"># Vía Metasploit</span>
+<span class="tool">use</span> auxiliary/scanner/smtp/smtp_version
+<span class="tool">set</span> RHOSTS 192.168.1.15
+<span class="tool">run</span>
 
-# Enumeración de usuarios manual (VRFY suele estar habilitado; EXPN, no)
-# Tras conectar por telnet/netcat al puerto 25:
-VRFY root
-VRFY admin
-EXPN root
+<span class="comment"># Enumeración de usuarios manual (VRFY suele estar habilitado; EXPN, no)</span>
+<span class="comment"># Tras conectar por telnet/netcat al puerto 25:</span>
+<span class="tool">VRFY</span> root
+<span class="tool">VRFY</span> admin
+<span class="tool">EXPN</span> root
 
-# Enumeración de usuarios vía Nmap (depende de que EXPN esté habilitado)
-nmap --script smtp-enum-users.nse 192.168.1.15 -p 25
+<span class="comment"># Enumeración de usuarios vía Nmap (depende de que EXPN esté habilitado)</span>
+<span class="tool">nmap</span> <span class="flag">--script</span> smtp-enum-users.nse 192.168.1.15 <span class="flag">-p</span> 25
 
-# Enumeración de usuarios con smtp-user-enum (pentest-monkey, en Kali por defecto)
-smtp-user-enum -M VRFY -U usuarios.txt -t 192.168.1.15
+<span class="comment"># Enumeración de usuarios con smtp-user-enum (pentest-monkey, en Kali por defecto)</span>
+<span class="tool">smtp-user-enum</span> <span class="flag">-M</span> VRFY <span class="flag">-U</span> usuarios.txt <span class="flag">-t</span> 192.168.1.15
 
-# Vía Metasploit (usa por defecto unix_users.txt)
-use auxiliary/scanner/smtp/smtp_enum
-set RHOSTS 192.168.1.15
-run
+<span class="comment"># Vía Metasploit (usa por defecto unix_users.txt)</span>
+<span class="tool">use</span> auxiliary/scanner/smtp/smtp_enum
+<span class="tool">set</span> RHOSTS 192.168.1.15
+<span class="tool">run</span>
 
-# Test de SMTP Relay vía Metasploit
-use auxiliary/scanner/smtp/smtp_relay
-set MAIL_FROM origen@dominio.com
-set MAILTO destino@dominio.com
-run
-```
+<span class="comment"># Test de SMTP Relay vía Metasploit</span>
+<span class="tool">use</span> auxiliary/scanner/smtp/smtp_relay
+<span class="tool">set</span> MAIL_FROM origen@dominio.com
+<span class="tool">set</span> MAILTO destino@dominio.com
+<span class="tool">run</span></code></pre>
 
 Códigos de respuesta relevantes en la enumeración de usuarios: 250/251/252 indican dirección válida, reenviada o desconocida (pero aceptada); 550 indica que la dirección no existe y el servidor rechazará el mensaje. Herramientas más completas como iSMTP combinan enumeración de usuarios, test de relay y email spoofing en una sola ejecución.
 
 **Banner grabbing genérico**, aplicable a cualquier servicio con banner:
 
-```bash
-nc <IP> <puerto>
-telnet <IP> <puerto>
-nmap -sV <IP> -p <puerto> --script=banner
-whatweb <IP_o_dominio>
-```
+<pre class="cmd-block"><code><span class="tool">nc</span> &lt;IP&gt; &lt;puerto&gt;
+<span class="tool">telnet</span> &lt;IP&gt; &lt;puerto&gt;
+<span class="tool">nmap</span> <span class="flag">-sV</span> &lt;IP&gt; <span class="flag">-p</span> &lt;puerto&gt; <span class="flag">--script=banner</span>
+<span class="tool">whatweb</span> &lt;IP_o_dominio&gt;</code></pre>
 
 **Fingerprinting web**, mencionado como línea de trabajo específica dentro del footprinting activo: identificación del servidor web, del CMS y de sus plugins, con herramientas como Whatweb, BlindElephant o Plecost, para después buscar vulnerabilidades conocidas asociadas a esas versiones concretas.
 
