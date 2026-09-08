@@ -13,7 +13,7 @@ enableRobotsTXT = true
 
 [permalinks]
   writeups = "/writeups/:slug/"
-  investigaciones = "/investigaciones/:slug/"
+  metodologias = "/metodologias/:slug/"
   reflexiones = "/reflexiones/:slug/"
 
 [related]
