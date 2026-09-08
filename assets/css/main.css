@@ -579,69 +579,31 @@ footer {
 }
 
 /* ============================
-   Resaltado de sintaxis para bloques de código (Chroma / Nmap, dig, bash…)
+   Resaltado manual de comandos (herramientas, flags, comentarios)
    ============================ */
-.content pre.chroma {
+.content pre.cmd-block {
   margin: 1.2rem 0;
   padding: 1.1rem 1.25rem;
   border: 1px solid var(--line);
   background: var(--bg-deep);
+  color: var(--text);
   overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
   font-size: 0.85rem;
   line-height: 1.6;
 }
 
-.content pre.chroma code {
-  color: var(--text);
-  background: none;
-  padding: 0;
-}
-
-/* Comentarios (# ...) */
-.content pre.chroma .c,
-.content pre.chroma .c1,
-.content pre.chroma .cm {
-  color: var(--muted);
-  font-style: italic;
-}
-
-/* Nombres de comando / binario (nmap, dig, whois, nc, telnet…) */
-.content pre.chroma .nb,
-.content pre.chroma .nf,
-.content pre.chroma .ne {
+.content pre.cmd-block .tool {
   color: var(--cyan);
   font-weight: 700;
 }
 
-/* Flags y opciones (-sS, --script, -oA…) */
-.content pre.chroma .o,
-.content pre.chroma .p {
+.content pre.cmd-block .flag {
   color: var(--pink);
 }
 
-/* Cadenas y argumentos entre comillas */
-.content pre.chroma .s,
-.content pre.chroma .s1,
-.content pre.chroma .s2 {
-  color: var(--lime);
-}
-
-/* Números, puertos, rangos IP */
-.content pre.chroma .mi,
-.content pre.chroma .m {
-  color: var(--orange);
-}
-
-/* Palabras clave del shell (if, for, use, set…) */
-.content pre.chroma .k,
-.content pre.chroma .kn,
-.content pre.chroma .kd {
-  color: var(--label);
-  font-weight: 700;
-}
-
-/* Variables y nombres genéricos sin resaltar de forma especial */
-.content pre.chroma .nv,
-.content pre.chroma .n {
-  color: var(--text);
+.content pre.cmd-block .comment {
+  color: var(--muted);
+  font-style: italic;
 }
