@@ -3,8 +3,10 @@ title: "TheHackersLabs: Benahoare"
 date: 2026-09-07T20:56:00+02:00
 draft: false
 description: "Recorrido completo de la máquina Benahoare: enumeración SMB con sesión nula, extracción de credenciales de una cuenta de servicio desde un script de mantenimiento expuesto en un recurso compartido, exposición de la cuenta de servicio en un endpoint de diagnóstico REST, acceso inicial por WinRM y escalada de privilegios abusando de permisos débiles sobre el servicio GuancheVMS."
-tags: ["thehackerslabs", "windows", "smb", "winrm", "weak-service-permissions", "active-directory"]
+tags: ["thehackerslabs", "smb", "winrm", "weak-service-permissions"]
 categories: ["writeups"]
+sistema: ["windows"]
+dificultad: "principiante"
 ---
 
 *La máquina Benahoare de TheHackersLabs simula la infraestructura de videovigilancia de una empresa de seguridad física, y su cadena de ataque nace de un fallo habitual en entornos corporativos: la sobreexposición de recursos de soporte interno. Un recurso SMB accesible sin autenticación entrega un script de PowerShell con la contraseña de una cuenta de servicio en texto plano, y un endpoint de diagnóstico pensado solo para uso interno confirma el nombre de esa cuenta antes incluso de intentar el acceso. Desde ahí, una sesión WinRM legítima destapa una ACL de servicio mal calculada que permite reescribir su binario de arranque y crear un administrador local sin depender de ningún exploit de kernel ni de credenciales adicionales.*
