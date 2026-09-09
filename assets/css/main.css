@@ -571,7 +571,7 @@ footer {
 }
 
 /* ============================
-   Etiquetas de lista (un único color, sin usar en otras partes)
+   Etiquetas de lista (un unico color, sin usar en otras partes)
    ============================ */
 .content ul li > strong:first-child,
 .content ol li > strong:first-child {
@@ -648,6 +648,7 @@ footer {
   font-size: 0.78rem;
   cursor: pointer;
   transition: border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+  text-decoration: none;
 }
 
 .filter-btn:hover {
