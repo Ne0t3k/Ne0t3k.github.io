@@ -5,6 +5,8 @@ draft: false
 tags: ["ctf", "thehackerslabs", "sql-injection", "union-based", "privilege-escalation", "capabilities", "persistencia"]
 categories: ["writeups"]
 summary: "Explotación de una inyección SQL en un formulario de login para eludir autenticación y extraer credenciales mediante UNION SELECT, cracking de hashes MD5, validación de credenciales por SSH, escalada de privilegios abusando de una capability cap_setuid sobre un script Python, y persistencia mediante un servicio systemd."
+sistema: ["linux"]
+dificultad: "principiante"
 ---
 
 *Recorrido completo de la máquina Constanza Robotics: bypass de autenticación por inyección SQL en un formulario de login corporativo, extracción de credenciales de la base de datos mediante UNION SELECT, cracking de hashes MD5, acceso SSH por reutilización de contraseña, escalada de privilegios abusando de una capability Linux sobre un binario de backup, y persistencia mediante un servicio systemd con reverse shell.*
