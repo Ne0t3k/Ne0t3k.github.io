@@ -1,0 +1,90 @@
+{{ define "main" }}
+<section class="wrap listing">
+  <p class="eyebrow">Archivo</p>
+  <h1>{{ .Title }}</h1>
+  {{ with .Content }}<div class="lead">{{ . }}</div>{{ end }}
+
+  <div class="filter-bar" role="group" aria-label="Filtros de write-ups">
+    <div class="filter-group">
+      <span class="filter-label">Dificultad</span>
+      <button class="filter-btn is-active" data-filter-type="dificultad" data-filter-value="todas">Todas</button>
+      <button class="filter-btn" data-filter-type="dificultad" data-filter-value="principiante">Principiante</button>
+      <button class="filter-btn" data-filter-type="dificultad" data-filter-value="avanzado">Avanzado</button>
+      <button class="filter-btn" data-filter-type="dificultad" data-filter-value="profesional">Profesional</button>
+      <button class="filter-btn" data-filter-type="dificultad" data-filter-value="experto">Experto</button>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Sistema</span>
+      <button class="filter-btn is-active" data-filter-type="sistema" data-filter-value="todos">Todos</button>
+      <button class="filter-btn" data-filter-type="sistema" data-filter-value="linux">Linux</button>
+      <button class="filter-btn" data-filter-type="sistema" data-filter-value="windows">Windows</button>
+      <button class="filter-btn" data-filter-type="sistema" data-filter-value="active-directory">Active Directory</button>
+    </div>
+  </div>
+
+  <p class="filter-empty is-hidden">No hay write-ups que coincidan con los filtros seleccionados.</p>
+
+  <div class="post-list" id="writeups-grid">
+    {{ range .Pages.ByDate.Reverse }}
+      {{ $dificultad := .Params.dificultad | default "" }}
+      {{ $sistemas := .Params.sistema | default slice }}
+      <article class="panel card"
+        data-dificultad="{{ $dificultad | lower }}"
+        data-sistema="{{ delimit $sistemas "," | lower }}">
+        <p class="tag">
+          {{ with .Params.plataforma }}{{ . }} · {{ end }}
+          {{ .Section | humanize }}
+        </p>
+        <div class="card-badges">
+          {{ if $dificultad }}<span class="badge badge-dificultad badge-{{ $dificultad | lower }}">{{ $dificultad | humanize }}</span>{{ end }}
+          {{ range $sistemas }}<span class="badge badge-sistema">{{ . | humanize }}</span>{{ end }}
+        </div>
+        <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+        <p>{{ .Description | default .Summary }}</p>
+        <div class="card-meta">{{ .Date.Format "02/01/2006" }} · {{ .ReadingTime }} min</div>
+        <a class="read" href="{{ .RelPermalink }}">Leer publicación →</a>
+      </article>
+    {{ else }}
+      <p class="empty">Aún no hay publicaciones en esta sección.</p>
+    {{ end }}
+  </div>
+</section>
+
+<script>
+(function () {
+  var grid = document.getElementById("writeups-grid");
+  if (!grid) return;
+
+  var cards = Array.prototype.slice.call(grid.querySelectorAll(".card"));
+  var emptyMsg = document.querySelector(".filter-empty");
+  var state = { dificultad: "todas", sistema: "todos" };
+
+  function applyFilters() {
+    var visibleCount = 0;
+    cards.forEach(function (card) {
+      var matchDificultad = state.dificultad === "todas" || card.dataset.dificultad === state.dificultad;
+      var matchSistema = state.sistema === "todos" || card.dataset.sistema.split(",").indexOf(state.sistema) !== -1;
+      var visible = matchDificultad && matchSistema;
+      card.classList.toggle("is-hidden", !visible);
+      if (visible) visibleCount++;
+    });
+    emptyMsg.classList.toggle("is-hidden", visibleCount !== 0);
+  }
+
+  document.querySelectorAll(".filter-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var type = btn.dataset.filterType;
+      var value = btn.dataset.filterValue;
+      state[type] = value;
+
+      document.querySelectorAll('.filter-btn[data-filter-type="' + type + '"]').forEach(function (b) {
+        b.classList.remove("is-active");
+      });
+      btn.classList.add("is-active");
+
+      applyFilters();
+    });
+  });
+})();
+</script>
+{{ end }}
