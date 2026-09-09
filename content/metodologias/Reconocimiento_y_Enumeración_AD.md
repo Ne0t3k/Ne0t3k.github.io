@@ -9,9 +9,7 @@ summary: "Metodología para las fases de reconocimiento y enumeración en entorn
 
 ## Introducción
 
-Esta pieza continúa la metodología de reconocimiento y enumeración documentada para entornos genéricos, aplicada ahora a **Active Directory (AD)**. AD introduce una superficie de enumeración propia que no existe en un host aislado: un directorio LDAP con todo el árbol de objetos del dominio, un servicio Kerberos con comportamiento distinto según exista o no una cuenta, y un protocolo SMB/RPC heredado que, mal asegurado, sigue exponiendo listados completos de usuarios y grupos sin autenticación.
-
-El objetivo es el mismo que en la pieza anterior: una referencia propia, verificada y con comandos reales, que cubra el recorrido lógico de la fase de reconocimiento en AD antes de plantear cualquier vector de explotación. Esta pieza cubre exclusivamente **descubrimiento y enumeración**; los ataques de obtención de credenciales (Kerberoasting activo, AS-REP Roasting, pass-the-hash y similares) quedan fuera de alcance y se documentarán en una pieza posterior centrada en explotación.
+Esta pieza recoge una síntesis metodológica propia sobre las fases de **reconocimiento** y **enumeración** en Active Directory, construida a partir de mi formación en seguridad ofensiva y contrastada con fuentes oficiales (MITRE ATT&CK, RFC 4120 y la documentación de cada herramienta empleada).
 
 ## Alcance
 
