@@ -18,4 +18,4 @@ El sitio reúne write-ups de CTF, investigación técnica, reflexiones y proyect
 | --- | --- |
 | [Write-ups](https://ne0t3k.github.io/writeups/) | Resoluciones documentadas de CTFs, laboratorios y retos técnicos autorizados. |
 | [Metodologías](https://ne0t3k.github.io/metodologias/) | Metodologías, procesos y buenas prácticas propias en investigación técnica. |
-| [Bitácora](https://ne0t3k.github.io/reflexiones/) | Reflexiones sobre aprendizaje, metodología y contexto técnico. |
+| [Bitácora](https://ne0t3k.github.io/reflexiones/) | Reflexiones sobre aprendizaje, artículos y contexto técnico. |
