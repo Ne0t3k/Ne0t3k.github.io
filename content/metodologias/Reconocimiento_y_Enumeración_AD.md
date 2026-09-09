@@ -1,7 +1,7 @@
 ---
 title: "Metodología de reconocimiento y enumeración en Active Directory"
 date: 2026-09-09
-draft: true
+draft: false
 tags: ["red-team", "reconocimiento", "enumeracion", "active-directory", "kerberos", "metodologia"]
 categories: ["metodologias"]
 summary: "Metodología para las fases de reconocimiento y enumeración en entornos Active Directory: descubrimiento del dominio, enumeración sin credenciales, LDAP, SMB, Kerberos, RID brute-force y recolección de relaciones con BloodHound."
