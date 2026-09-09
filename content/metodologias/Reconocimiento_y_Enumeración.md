@@ -10,7 +10,6 @@ summary: "Metodología para las fases de reconocimiento y enumeración en un tes
 ## Introducción
 
 Esta pieza recoge una síntesis metodológica propia sobre las fases de **reconocimiento** y **enumeración** en un test de intrusión, construida a partir de mi formación en seguridad ofensiva y contrastada con fuentes oficiales (MITRE ATT&CK, RFCs de los protocolos implicados y documentación de Nmap).
-El objetivo es tener una referencia propia, ordenada, con comandos reales y verificados, a la que volver antes de enfrentarme a un objetivo nuevo, en lugar de reconstruir cada vez la misma lista de sintaxis suelta.
 
 ## Alcance
 
