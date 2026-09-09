@@ -6,6 +6,8 @@ enableRobotsTXT = true
 [taxonomies]
   category = "categorias"
   tag = "etiquetas"
+  sistema = "sistemas"
+  dificultad = "dificultades"
 
 [params]
   description = "Ciberseguridad, investigación, OSINT y CTFs."
@@ -26,6 +28,12 @@ enableRobotsTXT = true
   [[related.indices]]
     name = "categorias"
     weight = 80
+  [[related.indices]]
+    name = "sistemas"
+    weight = 60
+  [[related.indices]]
+    name = "dificultades"
+    weight = 40
 
 [markup]
   [markup.highlight]
