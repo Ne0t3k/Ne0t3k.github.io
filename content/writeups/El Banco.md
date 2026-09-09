@@ -5,6 +5,8 @@ draft: false
 tags: ["ctf", "thehackerslabs", "lfi", "path-traversal", "privilege-escalation", "chattr", "persistencia"]
 categories: ["writeups"]
 summary: "Recorrido completo de la máquina Banco de TheHackersLabs: explotación de un LFI en un descargador de PDF, filtrado de credenciales desde una base de datos JSON, escalada de privilegios abusando de chattr con bit SUID y persistencia mediante un servicio systemd."
+sistema: ["linux"]
+dificultad: "principiante"
 ---
 
 *Un recorrido completo de la máquina Banco, detallando la explotación de una vulnerabilidad de Inclusión Local de Archivos (LFI) en un descargador de PDF, la recopilación de credenciales desde una base de datos expuesta, la escalada de privilegios mediante el bit SUID sobre `chattr` y el secuestro de un script mutable, y el establecimiento de persistencia sobre el sistema comprometido.*
