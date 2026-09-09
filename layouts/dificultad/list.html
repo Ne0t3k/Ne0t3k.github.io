@@ -1,0 +1,41 @@
+{{ define "main" }}
+<section class="wrap listing">
+  <p class="eyebrow">Dificultad</p>
+  <h1>{{ .Title | humanize }}</h1>
+  <p class="lead">Write-ups clasificados con nivel de dificultad «{{ .Title | humanize }}».</p>
+
+  <div class="filter-bar" role="group" aria-label="Otras dificultades">
+    <div class="filter-group">
+      <span class="filter-label">Ver otras</span>
+      <a class="filter-btn" href="{{ "dificultades/principiante/" | relURL }}">Principiante</a>
+      <a class="filter-btn" href="{{ "dificultades/avanzado/" | relURL }}">Avanzado</a>
+      <a class="filter-btn" href="{{ "dificultades/profesional/" | relURL }}">Profesional</a>
+      <a class="filter-btn" href="{{ "dificultades/experto/" | relURL }}">Experto</a>
+      <a class="filter-btn" href="{{ "writeups/" | relURL }}">Ver todos →</a>
+    </div>
+  </div>
+
+  <div class="post-list">
+    {{ range .Pages.ByDate.Reverse }}
+      {{ $dificultad := .Params.dificultad | default "" }}
+      {{ $sistemas := .Params.sistema | default slice }}
+      <article class="panel card">
+        <p class="tag">
+          {{ with .Params.plataforma }}{{ . }} · {{ end }}
+          {{ .Section | humanize }}
+        </p>
+        <div class="card-badges">
+          {{ if $dificultad }}<span class="badge badge-dificultad badge-{{ $dificultad | lower }}">{{ $dificultad | humanize }}</span>{{ end }}
+          {{ range $sistemas }}<span class="badge badge-sistema">{{ . | humanize }}</span>{{ end }}
+        </div>
+        <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+        <p>{{ .Description | default .Summary }}</p>
+        <div class="card-meta">{{ .Date.Format "02/01/2006" }} · {{ .ReadingTime }} min</div>
+        <a class="read" href="{{ .RelPermalink }}">Leer publicación →</a>
+      </article>
+    {{ else }}
+      <p class="empty">Aún no hay write-ups con esta dificultad.</p>
+    {{ end }}
+  </div>
+</section>
+{{ end }}
