@@ -607,3 +607,115 @@ footer {
   color: var(--muted);
   font-style: italic;
 }
+
+/* ============================
+   Filtros de write-ups: dificultad y sistema
+   ============================ */
+
+.filter-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 1.8rem 0 1.5rem;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid var(--line);
+  background: linear-gradient(135deg, rgba(27, 20, 49, 0.94), rgba(11, 10, 25, 0.92));
+  box-shadow: var(--shadow);
+}
+
+.filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filter-label {
+  min-width: 82px;
+  margin-right: 0.4rem;
+  color: var(--label);
+  font-size: 0.73rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.filter-btn {
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  font-family: "Space Mono", monospace;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.filter-btn:hover {
+  border-color: var(--line-bright);
+  color: var(--text);
+}
+
+.filter-btn.is-active {
+  border-color: var(--cyan);
+  color: var(--cyan);
+  box-shadow: 0 0 14px rgba(56, 232, 255, 0.25);
+}
+
+.filter-empty {
+  margin: 1.2rem 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.filter-empty.is-hidden {
+  display: none;
+}
+
+.card.is-hidden {
+  display: none;
+}
+
+/* ============================
+   Badges de dificultad y sistema (en tarjetas de write-ups)
+   ============================ */
+
+.card-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.5rem 0 0.15rem;
+}
+
+.badge {
+  padding: 0.15rem 0.55rem;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.7rem;
+  letter-spacing: 0.02em;
+}
+
+.badge-sistema {
+  border-color: rgba(255, 59, 189, 0.4);
+  color: var(--pink);
+}
+
+.badge-dificultad {
+  border-color: rgba(56, 232, 255, 0.4);
+  color: var(--cyan);
+}
+
+.badge-avanzado {
+  border-color: rgba(169, 255, 117, 0.4);
+  color: var(--lime);
+}
+
+.badge-profesional {
+  border-color: rgba(255, 189, 108, 0.45);
+  color: var(--orange);
+}
+
+.badge-experto {
+  border-color: rgba(255, 59, 189, 0.55);
+  color: var(--pink);
+  box-shadow: 0 0 10px rgba(255, 59, 189, 0.2);
+}
