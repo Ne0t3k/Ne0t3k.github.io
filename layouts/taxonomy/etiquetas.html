@@ -1,0 +1,37 @@
+{{ define "main" }}
+<section class="wrap listing">
+  <p class="eyebrow">Etiqueta</p>
+  <h1>{{ .Title | humanize }}</h1>
+  <p class="lead">Contenido clasificado con la etiqueta «{{ .Title | humanize }}».</p>
+
+  <div class="filter-bar" role="group" aria-label="Otras etiquetas">
+    <div class="filter-group">
+      <span class="filter-label">Ver otras</span>
+      <a class="filter-btn" href="{{ "etiquetas/osint/" | relURL }}">OSINT</a>
+      <a class="filter-btn" href="{{ "etiquetas/reconocimiento/" | relURL }}">Reconocimiento y enumeración</a>
+      <a class="filter-btn" href="{{ "etiquetas/explotacion/" | relURL }}">Explotación</a>
+      <a class="filter-btn" href="{{ "etiquetas/escalada-privilegios/" | relURL }}">Escalada de privilegios</a>
+      <a class="filter-btn" href="{{ "etiquetas/persistencia/" | relURL }}">Persistencia</a>
+      <a class="filter-btn" href="{{ "metodologias/" | relURL }}">Ver todas las metodologías →</a>
+    </div>
+  </div>
+
+  <div class="post-list">
+    {{ range .Pages.ByDate.Reverse }}
+      {{ $tags := .Params.tags | default slice }}
+      <article class="panel card">
+        <p class="tag">{{ .Section | humanize }}</p>
+        <div class="card-badges">
+          {{ range $tags }}<span class="badge badge-sistema">{{ . | humanize }}</span>{{ end }}
+        </div>
+        <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+        <p>{{ .Description | default .Summary }}</p>
+        <div class="card-meta">{{ .Date.Format "02/01/2006" }} · {{ .ReadingTime }} min</div>
+        <a class="read" href="{{ .RelPermalink }}">Leer publicación →</a>
+      </article>
+    {{ else }}
+      <p class="empty">Aún no hay contenido con esta etiqueta.</p>
+    {{ end }}
+  </div>
+</section>
+{{ end }}
