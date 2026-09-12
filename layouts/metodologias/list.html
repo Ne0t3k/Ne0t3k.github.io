@@ -1,0 +1,37 @@
+{{ define "main" }}
+<section class="wrap listing">
+  <p class="eyebrow">Metodologías</p>
+  <h1>{{ .Title | humanize }}</h1>
+  <p class="lead">Metodologías técnicas de red team y análisis: reconocimiento, explotación, escalada de privilegios, persistencia y OSINT.</p>
+
+  <div class="filter-bar" role="group" aria-label="Filtrar por temática">
+    <div class="filter-group">
+      <span class="filter-label">Filtrar por temática</span>
+      <a class="filter-btn" href="{{ "etiquetas/osint/" | relURL }}">OSINT</a>
+      <a class="filter-btn" href="{{ "etiquetas/reconocimiento/" | relURL }}">Reconocimiento y enumeración</a>
+      <a class="filter-btn" href="{{ "etiquetas/explotacion/" | relURL }}">Explotación</a>
+      <a class="filter-btn" href="{{ "etiquetas/escalada-privilegios/" | relURL }}">Escalada de privilegios</a>
+      <a class="filter-btn" href="{{ "etiquetas/persistencia/" | relURL }}">Persistencia</a>
+      <a class="filter-btn" href="{{ "metodologias/" | relURL }}">Ver todas →</a>
+    </div>
+  </div>
+
+  <div class="post-list">
+    {{ range .Pages.ByDate.Reverse }}
+      {{ $tags := .Params.tags | default slice }}
+      <article class="panel card">
+        <p class="tag">{{ .Section | humanize }}</p>
+        <div class="card-badges">
+          {{ range $tags }}<span class="badge badge-sistema">{{ . | humanize }}</span>{{ end }}
+        </div>
+        <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+        <p>{{ .Description | default .Summary }}</p>
+        <div class="card-meta">{{ .Date.Format "02/01/2006" }} · {{ .ReadingTime }} min</div>
+        <a class="read" href="{{ .RelPermalink }}">Leer metodología →</a>
+      </article>
+    {{ else }}
+      <p class="empty">Aún no hay metodologías publicadas.</p>
+    {{ end }}
+  </div>
+</section>
+{{ end }}
