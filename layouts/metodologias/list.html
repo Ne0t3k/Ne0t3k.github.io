@@ -1,26 +1,28 @@
 {{ define "main" }}
 <section class="wrap listing">
-  <p class="eyebrow">Metodologías</p>
-  <h1>{{ .Title | humanize }}</h1>
-  <p class="lead">Metodologías técnicas de red team y análisis: reconocimiento, enumeración, explotación, escalada de privilegios, persistencia y OSINT.</p>
+  <p class="eyebrow">Archivo</p>
+  <h1>{{ .Title }}</h1>
+  {{ with .Content }}<div class="lead">{{ . }}</div>{{ end }}
 
-  <div class="filter-bar" role="group" aria-label="Filtrar por temática">
+  <div class="filter-bar" role="group" aria-label="Filtros de metodologías">
     <div class="filter-group">
-      <span class="filter-label">Filtrar por temática</span>
-      <a class="filter-btn" href="{{ "etiquetas/osint/" | relURL }}">OSINT</a>
-      <a class="filter-btn" href="{{ "etiquetas/reconocimiento/" | relURL }}">Reconocimiento</a>
-      <a class="filter-btn" href="{{ "etiquetas/enumeracion/" | relURL }}">Enumeración</a>
-      <a class="filter-btn" href="{{ "etiquetas/explotacion/" | relURL }}">Explotación</a>
-      <a class="filter-btn" href="{{ "etiquetas/escalada-privilegios/" | relURL }}">Escalada de privilegios</a>
-      <a class="filter-btn" href="{{ "etiquetas/persistencia/" | relURL }}">Persistencia</a>
-      <a class="filter-btn" href="{{ "metodologias/" | relURL }}">Ver todas →</a>
+      <span class="filter-label">Temática</span>
+      <button class="filter-btn is-active" data-filter-value="todas">Todas</button>
+      <button class="filter-btn" data-filter-value="osint">OSINT</button>
+      <button class="filter-btn" data-filter-value="reconocimiento">Reconocimiento</button>
+      <button class="filter-btn" data-filter-value="enumeracion">Enumeración</button>
+      <button class="filter-btn" data-filter-value="explotacion">Explotación</button>
+      <button class="filter-btn" data-filter-value="escalada-privilegios">Escalada de privilegios</button>
+      <button class="filter-btn" data-filter-value="persistencia">Persistencia</button>
     </div>
   </div>
 
-  <div class="post-list">
+  <p class="filter-empty is-hidden">No hay metodologías que coincidan con el filtro seleccionado.</p>
+
+  <div class="post-list" id="metodologias-grid">
     {{ range .Pages.ByDate.Reverse }}
       {{ $tags := .Params.tags | default slice }}
-      <article class="panel card">
+      <article class="panel card" data-tags="{{ delimit $tags "," | lower }}">
         <p class="tag">{{ .Section | humanize }}</p>
         <div class="card-badges">
           {{ range $tags }}<span class="badge badge-sistema">{{ . | humanize }}</span>{{ end }}
@@ -35,4 +37,39 @@
     {{ end }}
   </div>
 </section>
+
+<script>
+(function () {
+  var grid = document.getElementById("metodologias-grid");
+  if (!grid) return;
+
+  var cards = Array.prototype.slice.call(grid.querySelectorAll(".card"));
+  var emptyMsg = document.querySelector(".filter-empty");
+  var current = "todas";
+
+  function applyFilter() {
+    var visibleCount = 0;
+    cards.forEach(function (card) {
+      var tags = card.dataset.tags ? card.dataset.tags.split(",") : [];
+      var visible = current === "todas" || tags.indexOf(current) !== -1;
+      card.classList.toggle("is-hidden", !visible);
+      if (visible) visibleCount++;
+    });
+    emptyMsg.classList.toggle("is-hidden", visibleCount !== 0);
+  }
+
+  document.querySelectorAll(".filter-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      current = btn.dataset.filterValue;
+
+      document.querySelectorAll(".filter-btn").forEach(function (b) {
+        b.classList.remove("is-active");
+      });
+      btn.classList.add("is-active");
+
+      applyFilter();
+    });
+  });
+})();
+</script>
 {{ end }}
