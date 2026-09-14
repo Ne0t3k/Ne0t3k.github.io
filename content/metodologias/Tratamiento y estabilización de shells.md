@@ -2,7 +2,7 @@
 title: "Metodología de tratamiento y estabilización de shells"
 date: 2026-09-14
 draft: false
-tags: ["red-team", "post-explotacion", "shell", "tty", "pty", "linux", "windows", "metodologia"]
+tags: ["red-team", "post-explotacion"]
 categories: ["metodologias"]
 summary: "Metodología para clasificar, estabilizar, operar, recuperar y documentar shells en Linux y Windows: TTY/PTTY, gestión de terminal, transporte, transferencia de ficheros, OPSEC operativa y trazabilidad."
 ---
