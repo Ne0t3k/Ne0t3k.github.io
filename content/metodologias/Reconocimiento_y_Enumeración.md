@@ -2,7 +2,7 @@
 title: "Metodología de reconocimiento y enumeración"
 date: 2026-09-08
 draft: false
-tags: ["red-team", "reconocimiento", "enumeracion", "nmap", "metodologia"]
+tags: ["red-team", "reconocimiento", "enumeracion"]
 categories: ["metodologias"]
 summary: "Metodología para las fases de reconocimiento y enumeración en un test de intrusión: footprinting pasivo y activo, fingerprinting, escaneo de puertos, Nmap en profundidad y enumeración de servicios."
 ---
