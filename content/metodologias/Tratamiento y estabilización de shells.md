@@ -69,8 +69,6 @@ CTRL+Z
 
 Los comandos que cambian atributos del terminal, como `stty raw -echo`, se ejecutan en el terminal local que mantiene el canal, no dentro de la shell remota.
 
----
-
 ## 1. Modelo de madurez de una shell
 
 No todas las sesiones ofrecen las mismas capacidades. Antes de ejecutar herramientas complejas conviene clasificar la shell en uno de los siguientes niveles.
@@ -95,8 +93,6 @@ La señal más clara de que una sesión está incompleta es que las teclas de co
 - `stty`, `tty`, `su`, `sudo`, `ssh` o editores interactivos fallan.
 - La salida aparece desordenada o no se ve lo que se escribe.
 - Los programas TUI muestran errores como `TERM environment variable not set`.
-
----
 
 ## 2. Validación inicial de la sesión
 
