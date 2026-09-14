@@ -43,8 +43,6 @@ Esta metodología cubre:
 - Registro de evidencias, comandos y resultados.
 - Matriz de decisión para elegir el método adecuado.
 
----
-
 ### Convenciones de ejecución
 
 Para evitar errores operativos, todos los comandos de esta metodología se etiquetan según el sistema en el que deben ejecutarse:
@@ -245,8 +243,6 @@ Resultados orientativos:
 | `ps ... tty` | `pts/0`, `tty1` | Sesión con terminal asociada |
 | `ps ... tty` | `?` | Proceso sin terminal de control |
 
----
-
 ## 3. Anatomía de una terminal Unix
 
 En Unix, un terminal no es solo una ventana. Hay varios componentes con funciones distintas:
@@ -276,8 +272,6 @@ Una PTY permite que procesos remotos se comporten como si estuvieran conectados 
 - Redimensionado de consola.
 
 El control de trabajos de Bash depende de una interfaz interactiva conectada a un terminal y de la cooperación entre el kernel, el controlador de terminal y la shell. `Ctrl+Z` normalmente suspende el proceso en primer plano, mientras que `bg` y `fg` permiten reanudarlo en segundo plano o primer plano respectivamente. [1][3]
-
----
 
 ## 4. Estabilización de shells Linux
 
@@ -491,8 +485,6 @@ No es necesario ejecutar todos los comandos. La idea es comprobar gradualmente q
 - Control de trabajos.
 - Redimensionado.
 
----
-
 ## 5. Alternativas para crear una PTY
 
 Python no siempre está instalado. La metodología debe incluir rutas alternativas ordenadas por disponibilidad y calidad del resultado.
@@ -681,8 +673,6 @@ En Windows, una sesión de PowerShell totalmente interactiva mediante ReverseSSH
 
 La elección entre ambas herramientas depende del objetivo: Penelope centraliza la gestión desde el lado del atacante y es preferible cuando se manejan múltiples sesiones simultáneas; ReverseSSH traslada la robustez al propio objetivo desplegando un servidor SSH real, lo que resulta más adecuado cuando se necesita SFTP y port forwarding estables con las herramientas SSH nativas del operador.
 
----
-
 ## 6. Configuración de entorno Linux
 
 Una shell estabilizada puede seguir siendo incómoda o inconsistente. El siguiente bloque reúne variables y ajustes útiles.
@@ -747,8 +737,6 @@ Puede comprobarse parte del estado actual con:
 
 Una shell de login puede cargar configuraciones adicionales desde `/etc/profile`, `~/.bash_profile`, `~/.bash_login` o `~/.profile`; una interactiva normal suele cargar `~/.bashrc`. El resultado práctico puede afectar a `PATH`, alias, proxy, variables de entorno y herramientas disponibles.
 
----
-
 ## 7. Señales, control de trabajos y procesos
 
 ### 7.1. Señales relevantes
@@ -802,8 +790,6 @@ El control de trabajos depende de una shell interactiva y de un terminal. Bash d
 <span class="tool">loginctl</span> list-sessions 2&gt;/dev/null</code></pre>
 
 Esto permite distinguir si la shell está colgada de un proceso de servicio, un demonio web, un agente, una sesión SSH, una tarea programada o un proceso de usuario.
-
----
 
 ## 8. Transferencia de ficheros y verificación
 
@@ -877,8 +863,6 @@ Antes de crear artefactos temporales, revisar opciones disponibles:
 | `$HOME` | Espacio del usuario | Puede tener mejor control de permisos, pero mayor trazabilidad |
 
 No se debe asumir que un directorio temporal es ejecutable. Las opciones `noexec`, `nosuid` y `nodev` pueden afectar a la ejecución o al comportamiento de un fichero.
-
----
 
 ## 9. Gestión de shells Windows
 
@@ -963,8 +947,6 @@ Para ficheros legítimos de trabajo, PowerShell permite calcular hashes y manipu
 <span class="comment"># Verificar integridad</span>
 <span class="tool">Get-FileHash</span> -Algorithm SHA256 .\fichero</code></pre>
 
----
-
 ## 10. Matriz de decisión
 
 | Situación observada | Diagnóstico probable | Acción prioritaria |
@@ -981,8 +963,6 @@ Para ficheros legítimos de trabajo, PowerShell permite calcular hashes y manipu
 | Shell Windows limitada | CMD o canal no interactivo | Cambiar a PowerShell o transporte administrable |
 | Hay credenciales válidas para SSH/WinRM | Canal frágil innecesario | Migrar a una sesión autenticada y auditable |
 | El entorno tiene PATH reducido | Shell no-login o ejecución desde servicio | Definir `PATH` explícitamente y comprobar binarios |
-
----
 
 ## 11. Flujo operativo recomendado
 
@@ -1024,16 +1004,6 @@ Para ficheros legítimos de trabajo, PowerShell permite calcular hashes y manipu
 3. Priorizar canales que ofrezcan autenticación, integridad, cifrado y auditoría.
 4. Mantener la sesión inicial solo el tiempo necesario para la transición.
 
-### Fase 6: documentar
-
-1. Guardar comandos ejecutados y resultados relevantes.
-2. Registrar hashes de ficheros transferidos.
-3. Diferenciar hechos observados de hipótesis.
-4. Anotar limitaciones: ausencia de TTY, comandos bloqueados, falta de privilegios o transporte inestable.
-5. Incluir timestamps y contexto de usuario/sistema.
-
----
-
 ## 12. Errores frecuentes
 
 ### Confundir una shell con una PTY
@@ -1064,8 +1034,6 @@ Sin una comprobación de integridad, no hay evidencia de que el artefacto recibi
 
 Si existe una alternativa autenticada, con mejor soporte de terminal y más fiabilidad, conviene realizar la transición. Una shell precaria es un medio inicial, no necesariamente el canal operativo óptimo.
 
----
-
 ## Análisis y criterio propio
 
 **La estabilización no es una fase cosmética.** Una shell sin PTY puede cambiar la interpretación de un resultado: un fallo de `sudo`, `su` o `ssh` puede deberse a ausencia de terminal y no a una restricción real de permisos o configuración. Por eso, cualquier conclusión obtenida desde una shell limitada debe marcarse como provisional hasta validar la calidad de la sesión.
@@ -1076,8 +1044,6 @@ Si existe una alternativa autenticada, con mejor soporte de terminal y más fiab
 
 **La documentación de la sesión tiene valor técnico.** Registrar el proceso padre, TTY, usuario, contexto, método de estabilización y hashes permite reproducir la cadena de acciones, explicar resultados ambiguos y separar hechos observados de inferencias.
 
----
-
 ## Limitaciones
 
 Los nombres de binarios, rutas, capacidades y comportamiento de terminal pueden variar entre distribuciones Linux, BusyBox, contenedores mínimos, appliances de red, macOS, BSD y versiones de Windows.
@@ -1085,8 +1051,6 @@ Los nombres de binarios, rutas, capacidades y comportamiento de terminal pueden 
 Algunas sesiones se ejecutan en contextos sin terminal por diseño: procesos web, tareas programadas, servicios, contenedores no interactivos o agentes de automatización. En esos casos, forzar una interacción de consola puede no ser necesario ni apropiado para la tarea; es preferible usar comandos no interactivos, salida estructurada y procedimientos de mínimo impacto.
 
 La sintaxis exacta de `script`, `socat`, Bash, PowerShell y herramientas relacionadas debe contrastarse con la documentación de la versión presente en el sistema.
-
----
 
 ## Conclusiones
 
