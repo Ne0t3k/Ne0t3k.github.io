@@ -2,7 +2,7 @@
 title: "OPSEC para investigadores"
 date: 2026-08-09
 draft: false
-tags: ["osint", "socmint", "opsec", "sock-puppets", "privacidad", "herramientas"]
+tags: ["osint", "socmint"]
 categories: ["metodologias"]
 summary: "Guía técnica y práctica de OPSEC para investigadores OSINT/SOCMINT: identidades, infraestructura, mitigación de fingerprinting, errores de correlación y un catálogo anotado de herramientas reales con enlace y uso concreto."
 ---
