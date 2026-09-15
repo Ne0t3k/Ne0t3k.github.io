@@ -52,6 +52,8 @@ La calidad del resultado depende más del diccionario elegido que de la herramie
 | `directory-list-2.3-{small,medium,big}.txt` | `SecLists/Discovery/Web-Content/` | Descubrimiento genérico de directorios, por tamaño según tiempo disponible |
 | `raft-{small,medium,large}-directories.txt` | `SecLists/Discovery/Web-Content/` | Diccionarios curados a partir de crawls reales, buena relación cobertura/ruido |
 | `raft-{small,medium,large}-files.txt` | `SecLists/Discovery/Web-Content/` | Ficheros concretos en vez de directorios |
+| `Common-Backup-File-Names.txt` | `SecLists/Discovery/Web-Content/` | Backups genéricos de sitio completo (zip, tar.gz, rar) |
+| `CommonBackdoors-PHP.fuzz.txt` | `SecLists/Discovery/Web-Content/` | Webshells y backdoors PHP conocidos |
 | `common.txt` | `SecLists/Discovery/Web-Content/` | Fuzzing rápido inicial, pocos falsos positivos |
 | `quickhits.txt` | `SecLists/Discovery/Web-Content/` | Rutas de alta probabilidad (paneles, backups típicos) para una primera pasada |
 | `CMS-specific` (WordPress, Joomla, Drupal) | `SecLists/Discovery/Web-Content/CMS/` | Cuando el fingerprinting previo ya identificó el CMS |
@@ -59,6 +61,7 @@ La calidad del resultado depende más del diccionario elegido que de la herramie
 | `burp-parameter-names.txt` | `SecLists/Discovery/Web-Content/` | Fuzzing de parámetros GET/POST |
 | `api/api-endpoints.txt`, `api/objects.txt` | `SecLists/Discovery/Web-Content/` | Fuzzing de rutas y recursos típicos de APIs REST |
 | `dirb` (`common.txt`, `big.txt`) | `/usr/share/wordlists/dirb/` | Alternativa histórica, más reducida que SecLists |
+| `raft-{small,medium,large}-files.txt` | `SecLists/Discovery/Web-Content/` | Nombres de fichero completos, no solo segmentos de ruta |
 
 Además de las wordlists estáticas, conviene generar diccionarios **específicos del objetivo** a partir de su propio contenido, más eficaces que un diccionario genérico cuando la aplicación usa terminología propia (nombres de producto, siglas internas, convenciones de nomenclatura):
 
@@ -98,6 +101,26 @@ La palabra clave `FUZZ` marca el punto de sustitución en la URL, cabeceras o cu
 
 <span class="comment"># Dos wordlists distintas, cada una con su propia palabra clave</span>
 <span class="tool">ffuf</span> <span class="flag">-u</span> http://dominio.com/USER/PASS <span class="flag">-w</span> usuarios.txt:USER <span class="flag">-w</span> contrasenas.txt:PASS</code></pre>
+
+<pre class="cmd-block"><code><span class="comment"># Búsqueda de ficheros con wordlist de nombres completos (no de palabras sueltas)</span>
+<span class="tool">ffuf</span> <span class="flag">-u</span> http://dominio.com/FUZZ <span class="flag">-w</span> /usr/share/seclists/Discovery/Web-Content/raft-medium-files.txt <span class="flag">-mc</span> 200,301,302,403
+
+<span class="comment"># Backups de base de datos con wordlist específica</span>
+<span class="tool">ffuf</span> <span class="flag">-u</span> http://dominio.com/FUZZ <span class="flag">-w</span> /usr/share/seclists/Discovery/Web-Content/Common-DB-Backups.txt <span class="flag">-mc</span> 200
+
+<span class="comment"># Nombres de backup genéricos de sitio completo (zip, tar.gz, rar)</span>
+<span class="tool">ffuf</span> <span class="flag">-u</span> http://dominio.com/FUZZ <span class="flag">-w</span> /usr/share/seclists/Discovery/Web-Content/Common-Backup-File-Names.txt <span class="flag">-mc</span> 200
+
+<span class="comment"># Combinando un nombre de ruta ya conocido con extensiones de backup (quick win clásico)</span>
+<span class="tool">ffuf</span> <span class="flag">-w</span> extensiones_backup.txt:FUZZ <span class="flag">-u</span> http://dominio.com/admin/configFUZZ
+<span class="comment"># extensiones_backup.txt: .bak .old .orig .save .swp .tmp .zip .tar.gz .sql .env</span>
+
+<span class="comment"># Detección de webshells/backdoors PHP conocidos (útil en auditorías sobre sistemas ya comprometidos)</span>
+<span class="tool">ffuf</span> <span class="flag">-u</span> http://dominio.com/FUZZ <span class="flag">-w</span> /usr/share/seclists/Discovery/Web-Content/CommonBackdoors-PHP.fuzz.txt <span class="flag">-mc</span> 200
+
+<span class="comment"># Ficheros de control de versiones expuestos (Git/SVN/Mercurial)</span>
+<span class="tool">ffuf</span> <span class="flag">-u</span> http://dominio.com/FUZZ <span class="flag">-w</span> rutas_vcs.txt <span class="flag">-mc</span> 200
+<span class="comment"># rutas_vcs.txt: .git/HEAD .git/config .git/index .svn/entries .hg/store</span></code></pre>
 
 #### 3.3. Modos de combinación multi-wordlist: clusterbomb, pitchfork y sniper
 
@@ -208,6 +231,42 @@ Según la documentación consolidada del propio proyecto, `-ac` debería conside
 
 La opción `-request` es especialmente útil para integrar ffuf con Burp Suite: se envía una petición interceptada a fichero ("Copy to file" o `Ctrl+R`), se sustituye manualmente el valor a fuzzear por `FUZZ` dentro del fichero, y se reproduce con todas las cabeceras, cookies y cuerpo originales intactos.
 
+#### 3.10. Opciones adicionales de red, TLS y control fino
+
+<pre class="cmd-block"><code><span class="comment"># Ignorar el cuerpo de la respuesta (solo cabeceras): acelera fuzzing cuando solo interesa el código de estado</span>
+<span class="tool">ffuf</span> <span class="flag">-u</span> http://dominio.com/FUZZ <span class="flag">-w</span> diccionario.txt <span class="flag">-ignore-body</span>
+
+<span class="comment"># Detener el escaneo automáticamente ante errores repetidos (timeouts, conexión rechazada)</span>
+<span class="tool">ffuf</span> <span class="flag">-u</span> http://dominio.com/FUZZ <span class="flag">-w</span> diccionario.txt <span class="flag">-se</span>
+
+<span class="comment"># Omitir verificación de certificado TLS (entornos de laboratorio con certificado autofirmado)</span>
+<span class="tool">ffuf</span> <span class="flag">-u</span> https://dominio.com/FUZZ <span class="flag">-w</span> diccionario.txt <span class="flag">-k</span>
+
+<span class="comment"># Seguir redirecciones en vez de reportarlas como 301/302 sin más</span>
+<span class="tool">ffuf</span> <span class="flag">-u</span> http://dominio.com/FUZZ <span class="flag">-w</span> diccionario.txt <span class="flag">-r</span>
+
+<span class="comment"># Timeout personalizado por petición (por defecto 10s), útil en objetivos con latencia alta</span>
+<span class="tool">ffuf</span> <span class="flag">-u</span> http://dominio.com/FUZZ <span class="flag">-w</span> diccionario.txt <span class="flag">-timeout</span> 20
+
+<span class="comment"># Salida silenciosa: solo URLs encontradas, sin barra de progreso ni banner (útil para integrarlo en pipelines)</span>
+<span class="tool">ffuf</span> <span class="flag">-u</span> http://dominio.com/FUZZ <span class="flag">-w</span> diccionario.txt <span class="flag">-s</span>
+
+<span class="comment"># Salida detallada, mostrando URL completa y cabeceras de cada resultado</span>
+<span class="tool">ffuf</span> <span class="flag">-u</span> http://dominio.com/FUZZ <span class="flag">-w</span> diccionario.txt <span class="flag">-v</span>
+
+<span class="comment"># Autenticación HTTP Basic embebida en la URL</span>
+<span class="tool">ffuf</span> <span class="flag">-u</span> http://usuario:contrasena@dominio.com/FUZZ <span class="flag">-w</span> diccionario.txt
+
+<span class="comment"># Lectura del diccionario desde stdin en vez de fichero (encadenar con otras herramientas)</span>
+<span class="tool">cat</span> diccionario.txt <span class="tool">|</span> <span class="tool">ffuf</span> <span class="flag">-u</span> http://dominio.com/FUZZ <span class="flag">-w</span> <span class="flag">-</span>
+
+<span class="comment"># Exportación adicional a CSV y Markdown, útiles para incluir directamente en un informe</span>
+<span class="tool">ffuf</span> <span class="flag">-u</span> http://dominio.com/FUZZ <span class="flag">-w</span> diccionario.txt <span class="flag">-o</span> resultados.csv <span class="flag">-of</span> csv
+<span class="tool">ffuf</span> <span class="flag">-u</span> http://dominio.com/FUZZ <span class="flag">-w</span> diccionario.txt <span class="flag">-o</span> resultados.md <span class="flag">-of</span> md
+
+<span class="comment"># Combinación completa de una pasada "de producción": calibrada, silenciosa, con reintentos y exportación</span>
+<span class="tool">ffuf</span> <span class="flag">-u</span> https://dominio.com/FUZZ <span class="flag">-w</span> /usr/share/seclists/Discovery/Web-Content/raft-medium-directories.txt <span class="flag">-e</span> .php,.bak,.zip <span class="flag">-ac</span> <span class="flag">-t</span> 60 <span class="flag">-se</span> <span class="flag">-r</span> <span class="flag">-o</span> hallazgos.json <span class="flag">-of</span> json</code></pre>
+
 ### 4. Gobuster
 
 Gobuster prioriza velocidad y simplicidad de uso sobre la flexibilidad de filtrado de ffuf; es preferible para pasadas rápidas de descubrimiento en `dir`, `dns`, `vhost`, `fuzz` o `s3` sin necesidad de calibración fina[web:2][web:9].
@@ -240,7 +299,51 @@ Gobuster prioriza velocidad y simplicidad de uso sobre la flexibilidad de filtra
 <span class="comment"># Modo S3: enumeración de buckets S3 con nombre predecible a partir de un diccionario</span>
 <span class="tool">gobuster</span> <span class="flag">s3</span> <span class="flag">-w</span> nombres_bucket.txt</code></pre>
 
-Un matiz relevante: la propia documentación de Gobuster advierte que el modo `dir` no soporta recursión encadenada de forma nativa en algunas versiones; en esos casos conviene tratar cada directorio hallado como un nuevo objetivo y relanzar el comando manualmente contra él en lugar de asumir cobertura completa con `-r`[web:4].
+<pre class="cmd-block"><code><span class="comment"># Búsqueda de ficheros con nombres completos y extensiones sensibles combinadas</span>
+<span class="tool">gobuster</span> <span class="flag">dir</span> <span class="flag">-u</span> http://dominio.com <span class="flag">-w</span> /usr/share/seclists/Discovery/Web-Content/raft-medium-files.txt <span class="flag">-x</span> bak,old,zip,sql,log,conf,config,env
+
+<span class="comment"># Enumeración específica de backups de base de datos</span>
+<span class="tool">gobuster</span> <span class="flag">dir</span> <span class="flag">-u</span> http://dominio.com <span class="flag">-w</span> /usr/share/seclists/Discovery/Web-Content/Common-DB-Backups.txt
+
+<span class="comment"># Enumeración de nombres de backup genéricos de sitio completo</span>
+<span class="tool">gobuster</span> <span class="flag">dir</span> <span class="flag">-u</span> http://dominio.com <span class="flag">-w</span> /usr/share/seclists/Discovery/Web-Content/Common-Backup-File-Names.txt</code></pre>
+
+Un matiz relevante: la propia documentación de Gobuster advierte que el modo `dir` no soporta recursión encadenada de forma nativa en algunas versiones; en esos casos conviene tratar cada directorio hallado como un nuevo objetivo y relanzar el comando manualmente contra él en lugar de asumir cobertura completa con `-r`.
+
+### 4.1. Flags globales y de autenticación
+
+<pre class="cmd-block"><code><span class="comment"># Autenticación HTTP Basic contra el propio recurso fuzzeado</span>
+<span class="tool">gobuster</span> <span class="flag">dir</span> <span class="flag">-u</span> http://dominio.com <span class="flag">-w</span> diccionario.txt <span class="flag">-U</span> usuario <span class="flag">-P</span> contrasena
+
+<span class="comment"># Omitir verificación de certificado TLS</span>
+<span class="tool">gobuster</span> <span class="flag">dir</span> <span class="flag">-u</span> https://dominio.com <span class="flag">-w</span> diccionario.txt <span class="flag">-k</span>
+
+<span class="comment"># Seguir redirecciones automáticamente en vez de reportarlas como resultado final</span>
+<span class="tool">gobuster</span> <span class="flag">dir</span> <span class="flag">-u</span> http://dominio.com <span class="flag">-w</span> diccionario.txt <span class="flag">-r</span>
+
+<span class="comment"># Añadir barra final a cada petición (detecta diferencias de comportamiento entre /admin y /admin/)</span>
+<span class="tool">gobuster</span> <span class="flag">dir</span> <span class="flag">-u</span> http://dominio.com <span class="flag">-w</span> diccionario.txt <span class="flag">-f</span>
+
+<span class="comment"># Modo expandido: imprime la URL completa de cada hallazgo en vez de solo la ruta relativa</span>
+<span class="tool">gobuster</span> <span class="flag">dir</span> <span class="flag">-u</span> http://dominio.com <span class="flag">-w</span> diccionario.txt <span class="flag">-e</span>
+
+<span class="comment"># Lista negra de códigos de estado (alternativa a -s cuando interesa excluir en vez de incluir)</span>
+<span class="tool">gobuster</span> <span class="flag">dir</span> <span class="flag">-u</span> http://dominio.com <span class="flag">-w</span> diccionario.txt <span class="flag">-b</span> 404,400
+
+<span class="comment"># Proxy explícito para enrutar el tráfico a Burp Suite</span>
+<span class="tool">gobuster</span> <span class="flag">dir</span> <span class="flag">-u</span> http://dominio.com <span class="flag">-w</span> diccionario.txt <span class="flag">-p</span> http://127.0.0.1:8080
+
+<span class="comment"># Ocultar los códigos de estado en la salida (solo rutas), útil para redirigir a fichero limpio</span>
+<span class="tool">gobuster</span> <span class="flag">dir</span> <span class="flag">-u</span> http://dominio.com <span class="flag">-w</span> diccionario.txt <span class="flag">-n</span>
+
+<span class="comment"># Exportación de resultados a fichero</span>
+<span class="tool">gobuster</span> <span class="flag">dir</span> <span class="flag">-u</span> http://dominio.com <span class="flag">-w</span> diccionario.txt <span class="flag">-o</span> resultados.txt
+
+<span class="comment"># Modo DNS: mostrar también registros CNAME de cada subdominio resuelto</span>
+<span class="tool">gobuster</span> <span class="flag">dns</span> <span class="flag">-d</span> dominio.com <span class="flag">-w</span> diccionario.txt <span class="flag">--show-cname</span>
+
+<span class="comment"># Modo VHost: forzar comparación por longitud de respuesta en vez de solo por código de estado</span>
+<span class="tool">gobuster</span> <span class="flag">vhost</span> <span class="flag">-u</span> http://dominio.com <span class="flag">-w</span> diccionario.txt <span class="flag">--append-domain</span></code></pre>
 
 ### 5. feroxbuster
 
@@ -270,6 +373,47 @@ feroxbuster está diseñado específicamente para el descubrimiento **recursivo*
 <span class="comment"># Exportación de resultados en varios formatos</span>
 <span class="tool">feroxbuster</span> <span class="flag">-u</span> https://dominio.com <span class="flag">-w</span> diccionario.txt <span class="flag">-o</span> resultados.txt
 <span class="tool">feroxbuster</span> <span class="flag">-u</span> https://dominio.com <span class="flag">-w</span> diccionario.txt <span class="flag">--json</span> <span class="flag">-o</span> resultados.json</code></pre>
+
+<pre class="cmd-block"><code><span class="comment"># Búsqueda de ficheros con extensiones sensibles y extracción de enlaces (útil si un backup enlaza a otros)</span>
+<span class="tool">feroxbuster</span> <span class="flag">-u</span> https://dominio.com <span class="flag">-w</span> /usr/share/seclists/Discovery/Web-Content/raft-medium-files.txt <span class="flag">-x</span> bak,old,zip,sql,env,config <span class="flag">-e</span>
+
+<span class="comment"># Backups de base de datos con wordlist específica</span>
+<span class="tool">feroxbuster</span> <span class="flag">-u</span> https://dominio.com <span class="flag">-w</span> /usr/share/seclists/Discovery/Web-Content/Common-DB-Backups.txt</code></pre>
+
+### 5.1. Extracción de enlaces, filtros y control de red
+
+<pre class="cmd-block"><code><span class="comment"># Extracción automática de enlaces dentro de HTML/JS de cada respuesta, generando nuevas peticiones a partir de ellos</span>
+<span class="tool">feroxbuster</span> <span class="flag">-u</span> https://dominio.com <span class="flag">-w</span> diccionario.txt <span class="flag">-e</span>
+
+<span class="comment"># Añadir barra final a cada petición</span>
+<span class="tool">feroxbuster</span> <span class="flag">-u</span> https://dominio.com <span class="flag">-w</span> diccionario.txt <span class="flag">-f</span>
+
+<span class="comment"># Seguir redirecciones y desactivar el filtrado automático de respuestas wildcard (páginas que responden 200 a cualquier ruta)</span>
+<span class="tool">feroxbuster</span> <span class="flag">-u</span> https://dominio.com <span class="flag">-w</span> diccionario.txt <span class="flag">-r</span> <span class="flag">-D</span>
+
+<span class="comment"># Omitir verificación de certificado TLS</span>
+<span class="tool">feroxbuster</span> <span class="flag">-u</span> https://dominio.com <span class="flag">-w</span> diccionario.txt <span class="flag">-k</span>
+
+<span class="comment"># Filtrado por tamaño de respuesta (equivalente a -fs de ffuf) y por líneas/palabras</span>
+<span class="tool">feroxbuster</span> <span class="flag">-u</span> https://dominio.com <span class="flag">-w</span> diccionario.txt <span class="flag">-S</span> 1234 <span class="flag">-N</span> 42 <span class="flag">-W</span> 10
+
+<span class="comment"># Incluir únicamente ciertos códigos de estado (alternativa a -C cuando se prefiere lista blanca)</span>
+<span class="tool">feroxbuster</span> <span class="flag">-u</span> https://dominio.com <span class="flag">-w</span> diccionario.txt <span class="flag">-s</span> 200,301,403
+
+<span class="comment"># Uso de proxy explícito para inspección con Burp Suite</span>
+<span class="tool">feroxbuster</span> <span class="flag">-u</span> https://dominio.com <span class="flag">-w</span> diccionario.txt <span class="flag">-p</span> http://127.0.0.1:8080
+
+<span class="comment"># Parada automática cuando la tasa de errores es excesiva (evita seguir martilleando un objetivo caído)</span>
+<span class="tool">feroxbuster</span> <span class="flag">-u</span> https://dominio.com <span class="flag">-w</span> diccionario.txt <span class="flag">--auto-bail</span>
+
+<span class="comment"># Lectura de múltiples objetivos desde stdin, combinable con otras herramientas de descubrimiento de subdominios</span>
+<span class="tool">cat</span> subdominios_activos.txt <span class="tool">|</span> <span class="tool">feroxbuster</span> <span class="flag">--stdin</span> <span class="flag">-w</span> diccionario.txt
+
+<span class="comment"># Verbosidad incremental para depuración de una ejecución con comportamiento inesperado</span>
+<span class="tool">feroxbuster</span> <span class="flag">-u</span> https://dominio.com <span class="flag">-w</span> diccionario.txt <span class="flag">-vv</span>
+
+<span class="comment"># Combinación completa de una pasada recursiva con extracción de enlaces, filtrado y exportación JSON</span>
+<span class="tool">feroxbuster</span> <span class="flag">-u</span> https://dominio.com <span class="flag">-w</span> /usr/share/seclists/Discovery/Web-Content/raft-medium-directories.txt <span class="flag">-x</span> php,bak <span class="flag">-e</span> <span class="flag">--auto-tune</span> <span class="flag">--depth</span> 3 <span class="flag">--json</span> <span class="flag">-o</span> hallazgos.json</code></pre>
 
 ### 6. dirsearch
 
@@ -302,7 +446,49 @@ dirsearch aporta una sintaxis de sustitución de extensiones distinta a la de ff
 <span class="comment"># Exportación de resultados</span>
 <span class="tool">dirsearch</span> <span class="flag">-u</span> https://dominio.com <span class="flag">--format</span> json <span class="flag">-o</span> resultados.json</code></pre>
 
+<pre class="cmd-block"><code><span class="comment"># Escaneo con extensiones sensibles típicas de backup y configuración</span>
+<span class="tool">dirsearch</span> <span class="flag">-u</span> https://dominio.com <span class="flag">-e</span> php,bak,old,sql,env,config,log,zip,tar.gz
+
+<span class="comment"># Uso explícito de la wordlist de backups de base de datos de SecLists</span>
+<span class="tool">dirsearch</span> <span class="flag">-u</span> https://dominio.com <span class="flag">-w</span> /usr/share/seclists/Discovery/Web-Content/Common-DB-Backups.txt
+
+<span class="comment"># Pasada exhaustiva de ficheros con raft-large-files, cuando el tiempo disponible lo permite</span>
+<span class="tool">dirsearch</span> <span class="flag">-u</span> https://dominio.com <span class="flag">-w</span> /usr/share/seclists/Discovery/Web-Content/raft-large-files.txt <span class="flag">-t</span> 50</code></pre>
+
 La propia documentación advierte que un número de hilos demasiado alto puede degradar el servicio objetivo hasta el punto de generar una denegación de servicio no intencionada; el límite razonable depende del tiempo de respuesta observado del servidor, no de la capacidad de la máquina atacante[web:27].
+
+### 6.1. Subdirectorios dirigidos, retries y reportes
+
+<pre class="cmd-block"><code><span class="comment"># Uso del listado predefinido de extensiones comunes, sin necesidad de especificarlas manualmente</span>
+<span class="tool">dirsearch</span> <span class="flag">-u</span> https://dominio.com <span class="flag">-E</span>
+
+<span class="comment"># Convertir el diccionario a minúsculas antes de usarlo (normaliza wordlists con mezcla de mayúsculas)</span>
+<span class="tool">dirsearch</span> <span class="flag">-u</span> https://dominio.com <span class="flag">-w</span> diccionario.txt <span class="flag">-l</span>
+
+<span class="comment"># Escanear únicamente subdirectorios concretos ya conocidos, en vez de la raíz completa</span>
+<span class="tool">dirsearch</span> <span class="flag">-u</span> https://dominio.com <span class="flag">--scan-subdirs</span> /api/,/panel/,/backup/
+
+<span class="comment"># Excluir subdirectorios del escaneo recursivo (rutas ruidosas o ya descartadas)</span>
+<span class="tool">dirsearch</span> <span class="flag">-u</span> https://dominio.com <span class="flag">-r</span> <span class="flag">--exclude-subdirs</span> /assets/,/static/
+
+<span class="comment"># Límite de nivel de recursión explícito (por defecto solo raíz + 1 nivel)</span>
+<span class="tool">dirsearch</span> <span class="flag">-u</span> https://dominio.com <span class="flag">-r</span> <span class="flag">-R</span> 3
+
+<span class="comment"># Exclusión de resultados por expresión regular sobre el cuerpo de respuesta</span>
+<span class="tool">dirsearch</span> <span class="flag">-u</span> https://dominio.com <span class="flag">--exclude-regexps</span> "^Error interno|no autorizado$"
+
+<span class="comment"># Retardo entre peticiones y número máximo de reintentos ante fallos de conexión</span>
+<span class="tool">dirsearch</span> <span class="flag">-u</span> https://dominio.com <span class="flag">-s</span> 0.5 <span class="flag">--max-retries</span> 3
+
+<span class="comment"># Forzar resolución por nombre de host en vez de por IP directa (relevante si hay virtual hosting o CDN)</span>
+<span class="tool">dirsearch</span> <span class="flag">-u</span> https://dominio.com <span class="flag">-b</span>
+
+<span class="comment"># Reportes simplificados: solo rutas encontradas, o en texto plano legible</span>
+<span class="tool">dirsearch</span> <span class="flag">-u</span> https://dominio.com <span class="flag">--simple-report=</span>hallazgos_simple.txt
+<span class="tool">dirsearch</span> <span class="flag">-u</span> https://dominio.com <span class="flag">--plain-text-report=</span>hallazgos_plano.txt
+
+<span class="comment"># Combinación completa: extensiones predefinidas, recursión acotada, exclusión de ruido y reporte simple</span>
+<span class="tool">dirsearch</span> <span class="flag">-u</span> https://dominio.com <span class="flag">-E</span> <span class="flag">-r</span> <span class="flag">-R</span> 2 <span class="flag">--exclude-subdirs</span> /assets/,/static/ <span class="flag">-t</span> 30 <span class="flag">--simple-report=</span>hallazgos.txt</code></pre>
 
 ### 7. Wfuzz
 
@@ -331,6 +517,47 @@ Wfuzz es más verboso en su sintaxis pero ofrece un control muy fino sobre filtr
 
 <span class="comment"># Multithreading y exportación a fichero</span>
 <span class="tool">wfuzz</span> <span class="flag">-c</span> <span class="flag">-z</span> file,diccionario.txt <span class="flag">-t</span> 50 <span class="flag">-f</span> resultados.txt,raw http://dominio.com/FUZZ</code></pre>
+
+<pre class="cmd-block"><code><span class="comment"># Búsqueda de ficheros con wordlist de nombres completos</span>
+<span class="tool">wfuzz</span> <span class="flag">-c</span> <span class="flag">-z</span> file,/usr/share/seclists/Discovery/Web-Content/raft-medium-files.txt <span class="flag">--hc</span> 404 http://dominio.com/FUZZ
+
+<span class="comment"># Nombre base conocido + extensión sensible combinados en dos puntos de inyección</span>
+<span class="tool">wfuzz</span> <span class="flag">-c</span> <span class="flag">-z</span> list,config-backup-database <span class="flag">-z</span> file,extensiones_backup.txt <span class="flag">--hc</span> 404 "http://dominio.com/FUZZ.FUZ2Z"</code></pre>
+
+### 7.1. Iteradores, encoders y payloads avanzados
+
+Wfuzz distingue entre **iteradores** (cómo se combinan varias listas de payloads entre sí) y **encoders** (cómo se transforma cada valor antes de enviarlo). Ambos se listan desde la propia herramienta y se combinan libremente con `-z`[web:63][web:67].
+
+<pre class="cmd-block"><code><span class="comment"># Listar iteradores y encoders disponibles en la instalación local</span>
+<span class="tool">wfuzz</span> <span class="flag">-e</span> iterators
+<span class="tool">wfuzz</span> <span class="flag">-e</span> encoders
+
+<span class="comment"># Iterador "zip": consume varias listas en paralelo por posición (equivalente al pitchfork de ffuf)</span>
+<span class="tool">wfuzz</span> <span class="flag">-c</span> <span class="flag">-z</span> file,usuarios.txt <span class="flag">-z</span> file,contrasenas.txt <span class="flag">-m</span> zip "http://dominio.com/login?user=FUZZ&pass=FUZ2Z"
+
+<span class="comment"># Iterador "chain": concatena varias listas en una sola secuencia para un mismo punto de inyección</span>
+<span class="tool">wfuzz</span> <span class="flag">-c</span> <span class="flag">-z</span> file,lista1.txt <span class="flag">-z</span> file,lista2.txt <span class="flag">-m</span> chain http://dominio.com/FUZZ
+
+<span class="comment"># Codificación de cada valor en URL-encode antes de enviarlo (útil con caracteres especiales en el diccionario)</span>
+<span class="tool">wfuzz</span> <span class="flag">-c</span> <span class="flag">-z</span> file,diccionario.txt,urlencode http://dominio.com/FUZZ
+
+<span class="comment"># Envío de cada valor como hash MD5, para probar hashes conocidos contra un endpoint</span>
+<span class="tool">wfuzz</span> <span class="flag">-c</span> <span class="flag">-z</span> file,diccionario.txt,md5 http://dominio.com/verificar?hash=FUZZ
+
+<span class="comment"># Payload de tipo lista inline (sin fichero), útil para pruebas rápidas de pocos valores</span>
+<span class="tool">wfuzz</span> <span class="flag">-c</span> <span class="flag">-z</span> list,admin-administrator-root http://dominio.com/FUZZ
+
+<span class="comment"># Filtro por expresión BBC (comparación con la petición baseline usando --filter, más flexible que --hc/--hl sueltos)</span>
+<span class="tool">wfuzz</span> <span class="flag">-c</span> <span class="flag">-z</span> file,diccionario.txt <span class="flag">--filter</span> "code!=BBB and l!=BBB" http://dominio.com/FUZZ
+
+<span class="comment"># Omitir verificación de certificado TLS</span>
+<span class="tool">wfuzz</span> <span class="flag">-c</span> <span class="flag">-z</span> file,diccionario.txt <span class="flag">--ssl-insecure</span> https://dominio.com/FUZZ
+
+<span class="comment"># Proxy explícito para inspección con Burp Suite</span>
+<span class="tool">wfuzz</span> <span class="flag">-c</span> <span class="flag">-z</span> file,diccionario.txt <span class="flag">-p</span> 127.0.0.1:8080:HTTP http://dominio.com/FUZZ
+
+<span class="comment"># Combinación completa: dos payloads en paralelo (zip), codificados, con filtro por baseline y exportación</span>
+<span class="tool">wfuzz</span> <span class="flag">-c</span> <span class="flag">-z</span> file,usuarios.txt <span class="flag">-z</span> file,contrasenas.txt,md5 <span class="flag">-m</span> zip <span class="flag">--filter</span> "code!=BBB" <span class="flag">-f</span> hallazgos.txt,raw "http://dominio.com/login?user=FUZZ&pass=FUZ2Z"</code></pre>
 
 ### 8. Enfoque combinado: de la pasada rápida a la exhaustiva
 
