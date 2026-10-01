@@ -765,16 +765,10 @@ footer {
   pointer-events: none;
 }
 
-.site-header,
 main,
 footer {
   position: relative;
   z-index: 1;
-}
-
-.site-header {
-  position: sticky;
-  z-index: 10;
 }
 
 @media (prefers-reduced-motion: reduce) {
