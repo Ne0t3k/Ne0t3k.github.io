@@ -107,9 +107,9 @@
 
     columns = Array.from({ length: count }, (_, index) => ({
       x: index * spacing + Math.random() * 20,
-      y: -Math.random() * height,
+      y: Math.random() * (height + 550),
       speed: 0.35 + Math.random() * 0.45,
-      active: Math.random() > 0.35
+      active: true
     }));
   }
 
@@ -124,7 +124,7 @@
     context.clearRect(0, 0, width, height);
 
     const symbolSpacing = 25;
-    const trailLength = width < 760 ? 16 : 22;
+    const trailLength = width < 760 ? 22 : 30;
 
     columns.forEach((column, columnIndex) => {
       if (!column.active) {
@@ -139,7 +139,7 @@
         }
 
         const fade = 1 - trailIndex / trailLength;
-        const opacity = 0.035 + 0.27 * fade * fade;
+        const opacity = 0.16 + 0.24 * fade;
         const isViolet = columnIndex % 6 === 0;
 
         const color = isViolet
