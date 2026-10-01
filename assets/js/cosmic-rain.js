@@ -121,44 +121,51 @@
     }
 
     lastFrame = timestamp;
+    context.clearRect(0, 0, width, height);
 
-    context.save();
-    context.globalCompositeOperation = "destination-out";
-    context.fillStyle = "rgba(0, 0, 0, 0.085)";
-    context.fillRect(0, 0, width, height);
-    context.restore();
+    const symbolSpacing = 36;
+    const trailLength = 4;
 
-    for (const column of columns) {
+    columns.forEach((column, columnIndex) => {
       if (!column.active) {
-        continue;
+        return;
       }
 
-      context.save();
-      context.translate(column.x, column.y);
-      context.lineWidth = 1.15;
-      context.lineCap = "round";
-      context.lineJoin = "round";
+      for (let trailIndex = 0; trailIndex < trailLength; trailIndex++) {
+        const symbolY = column.y - trailIndex * symbolSpacing;
 
-      const color =
-        Math.random() > 0.94
-          ? "rgba(199, 146, 255, 0.28)"
-          : "rgba(56, 232, 255, 0.21)";
+        if (symbolY < -symbolSize || symbolY > height + symbolSize) {
+          continue;
+        }
 
-      context.strokeStyle = color;
-      context.fillStyle = color;
+        const opacity = 0.24 - trailIndex * 0.045;
+        const isViolet = columnIndex % 6 === 0;
+        const color = isViolet
+          ? `rgba(199, 146, 255, ${opacity})`
+          : `rgba(56, 232, 255, ${opacity})`;
 
-      const symbol = symbols[Math.floor(Math.random() * symbols.length)];
-      symbol();
+        context.save();
+        context.translate(column.x, symbolY);
+        context.lineWidth = 1.15;
+        context.lineCap = "round";
+        context.lineJoin = "round";
+        context.strokeStyle = color;
+        context.fillStyle = color;
 
-      context.restore();
+        const symbolIndex =
+          (columnIndex + trailIndex) % symbols.length;
+
+        symbols[symbolIndex]();
+        context.restore();
+      }
 
       column.y += column.speed * symbolSize;
 
-      if (column.y > height + symbolSize * 8) {
+      if (column.y > height + trailLength * symbolSpacing) {
         column.y = -Math.random() * height * 0.5;
         column.active = Math.random() > 0.25;
       }
-    }
+    });
   }
 
   function stop() {
