@@ -10,7 +10,7 @@
     "(prefers-reduced-motion: reduce)"
   );
 
-  const glyphs = ["◊", "◇", "⌁", "∴", "⋮", "⟡", "⊹", "△"];
+  const glyphs = ["⟁", "⟐", "⌬", "⊗", "⋔", "☽", "∿", "⟡"];
   const fontSize = 19;
   const frameInterval = 1000 / 30;
 
@@ -38,7 +38,7 @@
     columns = Array.from({ length: count }, (_, index) => ({
       x: index * spacing + Math.random() * 18,
       y: -Math.random() * height,
-      speed: 0.45 + Math.random() * 0.65,
+      speed: 0.35 + Math.random() * 0.45,
       active: Math.random() > 0.35
     }));
   }
