@@ -102,7 +102,7 @@
     context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
     context.clearRect(0, 0, width, height);
 
-    const spacing = width < 760 ? 105 : 85;
+    const spacing = width < 760 ? 220 : 240;
     const count = Math.ceil(width / spacing);
 
     columns = Array.from({ length: count }, (_, index) => ({
