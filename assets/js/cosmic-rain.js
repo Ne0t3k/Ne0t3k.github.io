@@ -123,8 +123,8 @@
     lastFrame = timestamp;
     context.clearRect(0, 0, width, height);
 
-    const symbolSpacing = 36;
-    const trailLength = 4;
+    const symbolSpacing = 25;
+    const trailLength = width < 760 ? 16 : 22;
 
     columns.forEach((column, columnIndex) => {
       if (!column.active) {
@@ -138,8 +138,10 @@
           continue;
         }
 
-        const opacity = 0.24 - trailIndex * 0.045;
+        const fade = 1 - trailIndex / trailLength;
+        const opacity = 0.035 + 0.27 * fade * fade;
         const isViolet = columnIndex % 6 === 0;
+
         const color = isViolet
           ? `rgba(199, 146, 255, ${opacity})`
           : `rgba(56, 232, 255, ${opacity})`;
@@ -163,7 +165,7 @@
 
       if (column.y > height + trailLength * symbolSpacing) {
         column.y = -Math.random() * height * 0.5;
-        column.active = Math.random() > 0.25;
+        column.active = true;
       }
     });
   }
