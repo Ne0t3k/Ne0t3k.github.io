@@ -11,6 +11,7 @@
 {{ end }}
 </head>
 <body>
+  <canvas id="cosmic-rain" aria-hidden="true"></canvas>
   <header class="site-header"><nav class="wrap nav">
     <a class="brand" href="{{ site.Home.RelPermalink }}">NE0T3K<span>_</span></a>
     <div class="nav-links">
@@ -23,5 +24,8 @@
   </nav></header>
   <main>{{ block "main" . }}{{ end }}</main>
   <footer><div class="wrap">© {{ now.Year }} Ne0t3k · Investigación, aprendizaje y seguridad responsable.</div></footer>
+  {{ with resources.Get "js/cosmic-rain.js" }}
+    <script src="{{ .RelPermalink }}" defer></script>
+  {{ end }}
 </body>
 </html>
