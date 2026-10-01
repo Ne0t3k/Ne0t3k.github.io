@@ -484,8 +484,42 @@ footer {
 }
 
 @media (max-width: 760px) {
+  .site-header {
+    position: relative;
+    backdrop-filter: none;
+  }
+
+  .nav {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.65rem;
+    padding: 0.8rem 0 0.9rem;
+  }
+
+  .brand {
+    align-self: flex-start;
+    line-height: 1.3;
+  }
+
   .nav-links {
-    display: none;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.4rem;
+    font-size: 0.72rem;
+  }
+
+  .nav-links a {
+    display: flex;
+    align-items: center;
+    min-height: 42px;
+    padding: 0.45rem 0.65rem;
+    border: 1px solid var(--line);
+    background: rgba(17, 13, 33, 0.75);
+    line-height: 1.3;
+  }
+
+  .nav-links a:last-child {
+    grid-column: 1 / -1;
   }
 
   .wrap {
@@ -747,4 +781,9 @@ footer {
   #cosmic-rain {
     display: none;
   }
+}
+
+.nav a:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
 }
