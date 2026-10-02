@@ -10,20 +10,14 @@
   {{ $allPages := .Pages.ByDate.Reverse }}
   {{ $pages := where $allPages "Params.plataforma" "!=" nil }}
   {{ $platforms := slice }}
-  {{ $dificultades := slice }}
   {{ $sistemasDisponibles := slice }}
 
   {{ range $pages }}
     {{ $platform := .Params.plataforma }}
-    {{ $dificultad := .Params.dificultad | default "" }}
     {{ $sistemas := .Params.sistema | default slice }}
 
     {{ if not (in $platforms $platform) }}
       {{ $platforms = $platforms | append $platform }}
-    {{ end }}
-
-    {{ if and $dificultad (not (in $dificultades $dificultad)) }}
-      {{ $dificultades = $dificultades | append $dificultad }}
     {{ end }}
 
     {{ range $sistemas }}
@@ -73,18 +67,41 @@
           Todas
         </button>
 
-        {{ range $dificultades }}
-          {{ $dificultadSlug := . | urlize }}
+        <button
+          class="filter-btn"
+          type="button"
+          data-filter-type="dificultad"
+          data-filter-value="principiante"
+        >
+          Principiante
+        </button>
 
-          <button
-            class="filter-btn"
-            type="button"
-            data-filter-type="dificultad"
-            data-filter-value="{{ $dificultadSlug }}"
-          >
-            {{ . | humanize }}
-          </button>
-        {{ end }}
+        <button
+          class="filter-btn"
+          type="button"
+          data-filter-type="dificultad"
+          data-filter-value="avanzado"
+        >
+          Avanzado
+        </button>
+
+        <button
+          class="filter-btn"
+          type="button"
+          data-filter-type="dificultad"
+          data-filter-value="profesional"
+        >
+          Profesional
+        </button>
+
+        <button
+          class="filter-btn"
+          type="button"
+          data-filter-type="dificultad"
+          data-filter-value="experto"
+        >
+          Experto
+        </button>
       </div>
 
       <div class="filter-group">
@@ -149,20 +166,24 @@
           <div class="post-list">
             {{ range $platformPages }}
               {{ $dificultad := .Params.dificultad | default "" }}
-              {{ $dificultadSlug := $dificultad | urlize }}
               {{ $sistemas := .Params.sistema | default slice }}
+              {{ $sistemasIDs := slice }}
+
+              {{ range $sistemas }}
+                {{ $sistemasIDs = $sistemasIDs | append (. | urlize) }}
+              {{ end }}
 
               <article
                 class="panel card"
                 data-plataforma="{{ $platformSlug }}"
-                data-dificultad="{{ $dificultadSlug }}"
-                data-sistema="{{ delimit $sistemas "," | urlize }}"
+                data-dificultad="{{ $dificultad | lower }}"
+                data-sistema="{{ delimit $sistemasIDs "," }}"
               >
                 <p class="tag">{{ .Section | humanize }}</p>
 
                 <div class="card-badges">
                   {{ if $dificultad }}
-                    <span class="badge badge-dificultad badge-{{ $platformSlug }}-{{ $dificultadSlug }}">
+                    <span class="badge badge-dificultad badge-{{ $dificultad | lower }}">
                       {{ $dificultad | humanize }}
                     </span>
                   {{ end }}
@@ -278,7 +299,6 @@
         });
 
       button.classList.add("is-active");
-
       applyFilters();
     });
   });
