@@ -3,6 +3,7 @@ title: "TheHackersLabs: Phantom"
 date: 2026-09-10T20:51:00+02:00
 draft: false
 description: "Compromiso completo del dominio PHANTOM.THL: abuso de ACLs mal calculadas para escalar desde un usuario inicial hasta WinRM, captura de un hash NTLMv2 mediante LLMNR Poisoning, recuperación de una contraseña en texto claro desde un objeto tombstone de Active Directory, password spraying, escalada a Administrador mediante ADCS ESC3 y persistencia final con DCSync y Golden Ticket."
+plataforma: "The Hackers Labs"
 tags: ["thehackerslabs", "active-directory", "llmnr-poisoning", "adcs-esc3", "golden-ticket", "acl-abuse"]
 categories: ["writeups"]
 sistema: ["windows","active-directory"]
