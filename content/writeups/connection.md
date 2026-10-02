@@ -43,8 +43,6 @@ Nmap done: 256 IP addresses (4 hosts up) scanned in 11.33 seconds
 
 El barrido ARP localiza cuatro hosts activos:
 
-- `10.0.2.1`: gateway de la red virtual, identificado como una interfaz QEMU.
-- `10.0.2.2`: adaptador NAT de Oracle VirtualBox.
 - `10.0.2.3`: máquina atacante.
 - `10.0.2.8`: objetivo de la máquina, con MAC `08:00:27:32:90:C2` asociada a Oracle VirtualBox.
 
