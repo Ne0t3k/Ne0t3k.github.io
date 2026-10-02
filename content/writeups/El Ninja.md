@@ -2,6 +2,7 @@
 title: "TheHackersLabs: El Ninja"
 date: 2026-09-12
 draft: false
+plataforma: "The Hackers Labs"
 tags: ["ctf", "thehackerslabs", "postgresql", "rce", "lfi", "sudo-nginx", "privilege-escalation", "persistencia"]
 categories: ["writeups"]
 summary: "Recorrido completo de la máquina El Ninja de TheHackersLabs: RCE mediante autenticación de confianza en PostgreSQL, movimiento lateral a través de credenciales expuestas en el filesystem, escalada de privilegios abusando de una regla sudo sobre nginx y persistencia mediante un servicio systemd."
