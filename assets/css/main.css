@@ -816,17 +816,46 @@ footer {
   color: var(--cyan);
 }
 
-.badge-avanzado {
+/* ============================
+   Dificultades por plataforma
+   ============================ */
+
+/* The Hackers Labs */
+
+.badge-the-hackers-labs-principiante {
   border-color: rgba(169, 255, 117, 0.4);
   color: var(--lime);
 }
 
-.badge-profesional {
+.badge-the-hackers-labs-avanzado {
+  border-color: rgba(56, 232, 255, 0.4);
+  color: var(--cyan);
+}
+
+.badge-the-hackers-labs-profesional {
   border-color: rgba(255, 189, 108, 0.45);
   color: var(--orange);
 }
 
-.badge-experto {
+.badge-the-hackers-labs-experto {
+  border-color: rgba(255, 59, 189, 0.55);
+  color: var(--pink);
+  box-shadow: 0 0 10px rgba(255, 59, 189, 0.2);
+}
+
+/* VulNyx */
+
+.badge-vulnyx-facil {
+  border-color: rgba(169, 255, 117, 0.4);
+  color: var(--lime);
+}
+
+.badge-vulnyx-medio {
+  border-color: rgba(255, 189, 108, 0.45);
+  color: var(--orange);
+}
+
+.badge-vulnyx-dificil {
   border-color: rgba(255, 59, 189, 0.55);
   color: var(--pink);
   box-shadow: 0 0 10px rgba(255, 59, 189, 0.2);
