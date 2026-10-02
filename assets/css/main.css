@@ -483,6 +483,83 @@ footer {
   }
 }
 
+/* ============================
+   Agrupación de write-ups por plataforma
+   ============================ */
+
+.platform-group {
+  margin-top: 3.25rem;
+}
+
+.platform-group:first-child {
+  margin-top: 2.25rem;
+}
+
+.platform-group.is-hidden {
+  display: none;
+}
+
+.platform-group-head {
+  margin-bottom: 1rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--cyan);
+  background:
+    linear-gradient(90deg, rgba(56, 232, 255, 0.08), transparent 62%),
+    linear-gradient(135deg, rgba(27, 20, 49, 0.94), rgba(11, 10, 25, 0.92));
+  box-shadow: var(--shadow);
+}
+
+.platform-group-label {
+  margin: 0 0 0.25rem;
+  color: var(--label);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.platform-group-title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.platform-group-title-row h2 {
+  margin: 0;
+  color: var(--text);
+  font: 800 clamp(1.2rem, 2vw, 1.55rem) / 1.15 "Syne", sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.platform-group-title-row h2::before {
+  content: "// ";
+  color: var(--cyan);
+}
+
+.platform-group-count {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .platform-group {
+    margin-top: 2.5rem;
+  }
+
+  .platform-group-head {
+    padding: 0.9rem 1rem;
+  }
+
+  .platform-group-title-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
+}
+
 @media (max-width: 760px) {
   .site-header {
     position: relative;
