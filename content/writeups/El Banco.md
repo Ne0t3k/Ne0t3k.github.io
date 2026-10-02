@@ -2,6 +2,7 @@
 title: "TheHackersLabs: Banco"
 date: 2026-08-09
 draft: false
+plataforma: "The Hackers Labs"
 tags: ["ctf", "thehackerslabs", "lfi", "path-traversal", "privilege-escalation", "chattr", "persistencia"]
 categories: ["writeups"]
 summary: "Recorrido completo de la máquina Banco de TheHackersLabs: explotación de un LFI en un descargador de PDF, filtrado de credenciales desde una base de datos JSON, escalada de privilegios abusando de chattr con bit SUID y persistencia mediante un servicio systemd."
