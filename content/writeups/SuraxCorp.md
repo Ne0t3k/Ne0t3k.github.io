@@ -2,6 +2,7 @@
 title: "TheHackersLabs: SuraxCorp"
 date: 2026-09-16
 draft: false
+plataforma: "The Hackers Labs"
 tags: ["ctf", "thehackerslabs", "ipv6", "rsync", "vhost", "command-injection", "ssti", "sudo-telnet", "privilege-escalation", "persistencia"]
 categories: ["writeups"]
 summary: "Recorrido completo de la máquina SuraxCorp de TheHackersLabs: descubrimiento de un vhost oculto vía IPv6 link-local y rsync anónimo, extracción de credenciales de un binario mediante análisis estático y de tráfico, inyección de comandos en un formulario de diagnóstico, pivoting interno hacia una aplicación Flask vulnerable a SSTI, y escalada final abusando de una regla sudo sobre telnet."
