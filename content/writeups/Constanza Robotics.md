@@ -2,6 +2,7 @@
 title: "TheHackersLabs: Constanza Robotics"
 date: 2026-08-25
 draft: false
+plataforma: "The Hackers Labs"
 tags: ["ctf", "thehackerslabs", "sql-injection", "union-based", "privilege-escalation", "capabilities", "persistencia"]
 categories: ["writeups"]
 summary: "Explotación de una inyección SQL en un formulario de login para eludir autenticación y extraer credenciales mediante UNION SELECT, cracking de hashes MD5, validación de credenciales por SSH, escalada de privilegios abusando de una capability cap_setuid sobre un script Python, y persistencia mediante un servicio systemd."
