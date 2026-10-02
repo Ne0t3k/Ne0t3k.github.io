@@ -3,6 +3,7 @@ title: "TheHackersLabs: Benahoare"
 date: 2026-09-07T20:56:00+02:00
 draft: false
 description: "Recorrido completo de la máquina Benahoare: enumeración SMB con sesión nula, extracción de credenciales de una cuenta de servicio desde un script de mantenimiento expuesto en un recurso compartido, exposición de la cuenta de servicio en un endpoint de diagnóstico REST, acceso inicial por WinRM y escalada de privilegios abusando de permisos débiles sobre el servicio GuancheVMS."
+plataforma: "The Hackers Labs"
 tags: ["thehackerslabs", "smb", "winrm", "weak-service-permissions"]
 categories: ["writeups"]
 sistema: ["windows"]
