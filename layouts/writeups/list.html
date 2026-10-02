@@ -2,14 +2,17 @@
 <section class="wrap listing">
   <p class="eyebrow">Archivo</p>
   <h1>{{ .Title }}</h1>
+
   {{ with .Content }}
     <div class="lead">{{ . }}</div>
   {{ end }}
 
-  {{ $pages := .Pages.ByDate.Reverse }}
+  {{ $allPages := .Pages.ByDate.Reverse }}
+  {{ $pages := where $allPages "Params.plataforma" "!=" nil }}
   {{ $platforms := slice }}
+
   {{ range $pages }}
-    {{ $platform := .Params.plataforma | default "Sin plataforma asignada" }}
+    {{ $platform := .Params.plataforma }}
     {{ if not (in $platforms $platform) }}
       {{ $platforms = $platforms | append $platform }}
     {{ end }}
@@ -19,6 +22,7 @@
     <div class="filter-bar" role="group" aria-label="Filtros de write-ups">
       <div class="filter-group">
         <span class="filter-label">Plataforma</span>
+
         <button
           class="filter-btn is-active"
           type="button"
@@ -27,8 +31,10 @@
         >
           Todas
         </button>
+
         {{ range $platforms }}
           {{ $platformSlug := . | urlize }}
+
           <button
             class="filter-btn"
             type="button"
@@ -42,6 +48,7 @@
 
       <div class="filter-group">
         <span class="filter-label">Dificultad</span>
+
         <button
           class="filter-btn is-active"
           type="button"
@@ -50,6 +57,7 @@
         >
           Todas
         </button>
+
         <button
           class="filter-btn"
           type="button"
@@ -58,6 +66,7 @@
         >
           Principiante
         </button>
+
         <button
           class="filter-btn"
           type="button"
@@ -66,6 +75,7 @@
         >
           Avanzado
         </button>
+
         <button
           class="filter-btn"
           type="button"
@@ -74,6 +84,7 @@
         >
           Profesional
         </button>
+
         <button
           class="filter-btn"
           type="button"
@@ -86,6 +97,7 @@
 
       <div class="filter-group">
         <span class="filter-label">Sistema</span>
+
         <button
           class="filter-btn is-active"
           type="button"
@@ -94,6 +106,7 @@
         >
           Todos
         </button>
+
         <button
           class="filter-btn"
           type="button"
@@ -102,6 +115,7 @@
         >
           Linux
         </button>
+
         <button
           class="filter-btn"
           type="button"
@@ -110,6 +124,7 @@
         >
           Windows
         </button>
+
         <button
           class="filter-btn"
           type="button"
@@ -130,9 +145,6 @@
         {{ $platform := . }}
         {{ $platformSlug := $platform | urlize }}
         {{ $platformPages := where $pages "Params.plataforma" $platform }}
-        {{ if eq $platform "Sin plataforma asignada" }}
-          {{ $platformPages = where $pages "Params.plataforma" nil }}
-        {{ end }}
 
         <section
           class="platform-group"
@@ -141,11 +153,17 @@
         >
           <header class="platform-group-head">
             <p class="platform-group-label">Plataforma</p>
+
             <div class="platform-group-title-row">
               <h2 id="platform-{{ $platformSlug }}">{{ $platform }}</h2>
+
               <span class="platform-group-count">
                 {{ len $platformPages }}
-                {{ if eq (len $platformPages) 1 }}publicación{{ else }}publicaciones{{ end }}
+                {{ if eq (len $platformPages) 1 }}
+                  publicación
+                {{ else }}
+                  publicaciones
+                {{ end }}
               </span>
             </div>
           </header>
@@ -154,15 +172,14 @@
             {{ range $platformPages }}
               {{ $dificultad := .Params.dificultad | default "" }}
               {{ $sistemas := .Params.sistema | default slice }}
+
               <article
                 class="panel card"
                 data-plataforma="{{ $platformSlug }}"
                 data-dificultad="{{ $dificultad | lower }}"
                 data-sistema="{{ delimit $sistemas "," | lower }}"
               >
-                <p class="tag">
-                  {{ .Section | humanize }}
-                </p>
+                <p class="tag">{{ .Section | humanize }}</p>
 
                 <div class="card-badges">
                   {{ if $dificultad }}
@@ -172,7 +189,9 @@
                   {{ end }}
 
                   {{ range $sistemas }}
-                    <span class="badge badge-sistema">{{ . | humanize }}</span>
+                    <span class="badge badge-sistema">
+                      {{ . | humanize }}
+                    </span>
                   {{ end }}
                 </div>
 
@@ -196,7 +215,9 @@
       {{ end }}
     </div>
   {{ else }}
-    <p class="empty">Aún no hay publicaciones en esta sección.</p>
+    <p class="empty">
+      Aún no hay write-ups con una plataforma asignada.
+    </p>
   {{ end }}
 </section>
 
