@@ -10,11 +10,26 @@
   {{ $allPages := .Pages.ByDate.Reverse }}
   {{ $pages := where $allPages "Params.plataforma" "!=" nil }}
   {{ $platforms := slice }}
+  {{ $dificultades := slice }}
+  {{ $sistemasDisponibles := slice }}
 
   {{ range $pages }}
     {{ $platform := .Params.plataforma }}
+    {{ $dificultad := .Params.dificultad | default "" }}
+    {{ $sistemas := .Params.sistema | default slice }}
+
     {{ if not (in $platforms $platform) }}
       {{ $platforms = $platforms | append $platform }}
+    {{ end }}
+
+    {{ if and $dificultad (not (in $dificultades $dificultad)) }}
+      {{ $dificultades = $dificultades | append $dificultad }}
+    {{ end }}
+
+    {{ range $sistemas }}
+      {{ if not (in $sistemasDisponibles .) }}
+        {{ $sistemasDisponibles = $sistemasDisponibles | append . }}
+      {{ end }}
     {{ end }}
   {{ end }}
 
@@ -58,41 +73,18 @@
           Todas
         </button>
 
-        <button
-          class="filter-btn"
-          type="button"
-          data-filter-type="dificultad"
-          data-filter-value="principiante"
-        >
-          Principiante
-        </button>
+        {{ range $dificultades }}
+          {{ $dificultadSlug := . | urlize }}
 
-        <button
-          class="filter-btn"
-          type="button"
-          data-filter-type="dificultad"
-          data-filter-value="avanzado"
-        >
-          Avanzado
-        </button>
-
-        <button
-          class="filter-btn"
-          type="button"
-          data-filter-type="dificultad"
-          data-filter-value="profesional"
-        >
-          Profesional
-        </button>
-
-        <button
-          class="filter-btn"
-          type="button"
-          data-filter-type="dificultad"
-          data-filter-value="experto"
-        >
-          Experto
-        </button>
+          <button
+            class="filter-btn"
+            type="button"
+            data-filter-type="dificultad"
+            data-filter-value="{{ $dificultadSlug }}"
+          >
+            {{ . | humanize }}
+          </button>
+        {{ end }}
       </div>
 
       <div class="filter-group">
@@ -107,32 +99,18 @@
           Todos
         </button>
 
-        <button
-          class="filter-btn"
-          type="button"
-          data-filter-type="sistema"
-          data-filter-value="linux"
-        >
-          Linux
-        </button>
+        {{ range $sistemasDisponibles }}
+          {{ $sistemaSlug := . | urlize }}
 
-        <button
-          class="filter-btn"
-          type="button"
-          data-filter-type="sistema"
-          data-filter-value="windows"
-        >
-          Windows
-        </button>
-
-        <button
-          class="filter-btn"
-          type="button"
-          data-filter-type="sistema"
-          data-filter-value="active-directory"
-        >
-          Active Directory
-        </button>
+          <button
+            class="filter-btn"
+            type="button"
+            data-filter-type="sistema"
+            data-filter-value="{{ $sistemaSlug }}"
+          >
+            {{ . | humanize }}
+          </button>
+        {{ end }}
       </div>
     </div>
 
@@ -171,19 +149,20 @@
           <div class="post-list">
             {{ range $platformPages }}
               {{ $dificultad := .Params.dificultad | default "" }}
+              {{ $dificultadSlug := $dificultad | urlize }}
               {{ $sistemas := .Params.sistema | default slice }}
 
               <article
                 class="panel card"
                 data-plataforma="{{ $platformSlug }}"
-                data-dificultad="{{ $dificultad | lower }}"
-                data-sistema="{{ delimit $sistemas "," | lower }}"
+                data-dificultad="{{ $dificultadSlug }}"
+                data-sistema="{{ delimit $sistemas "," | urlize }}"
               >
                 <p class="tag">{{ .Section | humanize }}</p>
 
                 <div class="card-badges">
                   {{ if $dificultad }}
-                    <span class="badge badge-dificultad badge-{{ $dificultad | lower }}">
+                    <span class="badge badge-dificultad badge-{{ $platformSlug }}-{{ $dificultadSlug }}">
                       {{ $dificultad | humanize }}
                     </span>
                   {{ end }}
