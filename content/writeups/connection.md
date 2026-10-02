@@ -7,7 +7,7 @@ tags: ["ctf", "vulnyx", "windows", "lfi", "arbitrary-file-read", "php", "mremote
 categories: ["writeups"]
 summary: "Resolución de Connection, una máquina Windows de VulNyx: lectura arbitraria de archivos mediante un parámetro vulnerable en PHP, recuperación de una configuración de mRemoteNG, descifrado de una credencial administrativa y acceso remoto por SMB y WinRM."
 sistema: ["windows"]
-dificultad: "difícil"
+dificultad: "experto"
 ---
 
 *Un recorrido completo de la máquina Connection, centrado en la identificación y explotación de una lectura arbitraria de archivos en una aplicación PHP, el acceso a artefactos del perfil de Administrator, la recuperación de una configuración de mRemoteNG y el descifrado de una contraseña reutilizada para obtener acceso administrativo mediante SMB y WinRM.*
