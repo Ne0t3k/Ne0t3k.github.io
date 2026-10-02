@@ -2,85 +2,282 @@
 <section class="wrap listing">
   <p class="eyebrow">Archivo</p>
   <h1>{{ .Title }}</h1>
-  {{ with .Content }}<div class="lead">{{ . }}</div>{{ end }}
+  {{ with .Content }}
+    <div class="lead">{{ . }}</div>
+  {{ end }}
 
-  <div class="filter-bar" role="group" aria-label="Filtros de write-ups">
-    <div class="filter-group">
-      <span class="filter-label">Dificultad</span>
-      <button class="filter-btn is-active" data-filter-type="dificultad" data-filter-value="todas">Todas</button>
-      <button class="filter-btn" data-filter-type="dificultad" data-filter-value="principiante">Principiante</button>
-      <button class="filter-btn" data-filter-type="dificultad" data-filter-value="avanzado">Avanzado</button>
-      <button class="filter-btn" data-filter-type="dificultad" data-filter-value="profesional">Profesional</button>
-      <button class="filter-btn" data-filter-type="dificultad" data-filter-value="experto">Experto</button>
-    </div>
-    <div class="filter-group">
-      <span class="filter-label">Sistema</span>
-      <button class="filter-btn is-active" data-filter-type="sistema" data-filter-value="todos">Todos</button>
-      <button class="filter-btn" data-filter-type="sistema" data-filter-value="linux">Linux</button>
-      <button class="filter-btn" data-filter-type="sistema" data-filter-value="windows">Windows</button>
-      <button class="filter-btn" data-filter-type="sistema" data-filter-value="active-directory">Active Directory</button>
-    </div>
-  </div>
-
-  <p class="filter-empty is-hidden">No hay write-ups que coincidan con los filtros seleccionados.</p>
-
-  <div class="post-list" id="writeups-grid">
-    {{ range .Pages.ByDate.Reverse }}
-      {{ $dificultad := .Params.dificultad | default "" }}
-      {{ $sistemas := .Params.sistema | default slice }}
-      <article class="panel card"
-        data-dificultad="{{ $dificultad | lower }}"
-        data-sistema="{{ delimit $sistemas "," | lower }}">
-        <p class="tag">
-          {{ with .Params.plataforma }}{{ . }} · {{ end }}
-          {{ .Section | humanize }}
-        </p>
-        <div class="card-badges">
-          {{ if $dificultad }}<span class="badge badge-dificultad badge-{{ $dificultad | lower }}">{{ $dificultad | humanize }}</span>{{ end }}
-          {{ range $sistemas }}<span class="badge badge-sistema">{{ . | humanize }}</span>{{ end }}
-        </div>
-        <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
-        <p>{{ .Description | default .Summary }}</p>
-        <div class="card-meta">{{ .Date.Format "02/01/2006" }} · {{ .ReadingTime }} min</div>
-        <a class="read" href="{{ .RelPermalink }}">Leer publicación →</a>
-      </article>
-    {{ else }}
-      <p class="empty">Aún no hay publicaciones en esta sección.</p>
+  {{ $pages := .Pages.ByDate.Reverse }}
+  {{ $platforms := slice }}
+  {{ range $pages }}
+    {{ $platform := .Params.plataforma | default "Sin plataforma asignada" }}
+    {{ if not (in $platforms $platform) }}
+      {{ $platforms = $platforms | append $platform }}
     {{ end }}
-  </div>
+  {{ end }}
+
+  {{ if $pages }}
+    <div class="filter-bar" role="group" aria-label="Filtros de write-ups">
+      <div class="filter-group">
+        <span class="filter-label">Plataforma</span>
+        <button
+          class="filter-btn is-active"
+          type="button"
+          data-filter-type="plataforma"
+          data-filter-value="todas"
+        >
+          Todas
+        </button>
+        {{ range $platforms }}
+          {{ $platformSlug := . | urlize }}
+          <button
+            class="filter-btn"
+            type="button"
+            data-filter-type="plataforma"
+            data-filter-value="{{ $platformSlug }}"
+          >
+            {{ . }}
+          </button>
+        {{ end }}
+      </div>
+
+      <div class="filter-group">
+        <span class="filter-label">Dificultad</span>
+        <button
+          class="filter-btn is-active"
+          type="button"
+          data-filter-type="dificultad"
+          data-filter-value="todas"
+        >
+          Todas
+        </button>
+        <button
+          class="filter-btn"
+          type="button"
+          data-filter-type="dificultad"
+          data-filter-value="principiante"
+        >
+          Principiante
+        </button>
+        <button
+          class="filter-btn"
+          type="button"
+          data-filter-type="dificultad"
+          data-filter-value="avanzado"
+        >
+          Avanzado
+        </button>
+        <button
+          class="filter-btn"
+          type="button"
+          data-filter-type="dificultad"
+          data-filter-value="profesional"
+        >
+          Profesional
+        </button>
+        <button
+          class="filter-btn"
+          type="button"
+          data-filter-type="dificultad"
+          data-filter-value="experto"
+        >
+          Experto
+        </button>
+      </div>
+
+      <div class="filter-group">
+        <span class="filter-label">Sistema</span>
+        <button
+          class="filter-btn is-active"
+          type="button"
+          data-filter-type="sistema"
+          data-filter-value="todos"
+        >
+          Todos
+        </button>
+        <button
+          class="filter-btn"
+          type="button"
+          data-filter-type="sistema"
+          data-filter-value="linux"
+        >
+          Linux
+        </button>
+        <button
+          class="filter-btn"
+          type="button"
+          data-filter-type="sistema"
+          data-filter-value="windows"
+        >
+          Windows
+        </button>
+        <button
+          class="filter-btn"
+          type="button"
+          data-filter-type="sistema"
+          data-filter-value="active-directory"
+        >
+          Active Directory
+        </button>
+      </div>
+    </div>
+
+    <p class="filter-empty is-hidden">
+      No hay write-ups que coincidan con los filtros seleccionados.
+    </p>
+
+    <div id="writeups-groups">
+      {{ range $platforms }}
+        {{ $platform := . }}
+        {{ $platformSlug := $platform | urlize }}
+        {{ $platformPages := where $pages "Params.plataforma" $platform }}
+        {{ if eq $platform "Sin plataforma asignada" }}
+          {{ $platformPages = where $pages "Params.plataforma" nil }}
+        {{ end }}
+
+        <section
+          class="platform-group"
+          data-platform-group="{{ $platformSlug }}"
+          aria-labelledby="platform-{{ $platformSlug }}"
+        >
+          <header class="platform-group-head">
+            <p class="platform-group-label">Plataforma</p>
+            <div class="platform-group-title-row">
+              <h2 id="platform-{{ $platformSlug }}">{{ $platform }}</h2>
+              <span class="platform-group-count">
+                {{ len $platformPages }}
+                {{ if eq (len $platformPages) 1 }}publicación{{ else }}publicaciones{{ end }}
+              </span>
+            </div>
+          </header>
+
+          <div class="post-list">
+            {{ range $platformPages }}
+              {{ $dificultad := .Params.dificultad | default "" }}
+              {{ $sistemas := .Params.sistema | default slice }}
+              <article
+                class="panel card"
+                data-plataforma="{{ $platformSlug }}"
+                data-dificultad="{{ $dificultad | lower }}"
+                data-sistema="{{ delimit $sistemas "," | lower }}"
+              >
+                <p class="tag">
+                  {{ .Section | humanize }}
+                </p>
+
+                <div class="card-badges">
+                  {{ if $dificultad }}
+                    <span class="badge badge-dificultad badge-{{ $dificultad | lower }}">
+                      {{ $dificultad | humanize }}
+                    </span>
+                  {{ end }}
+
+                  {{ range $sistemas }}
+                    <span class="badge badge-sistema">{{ . | humanize }}</span>
+                  {{ end }}
+                </div>
+
+                <h3>
+                  <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+                </h3>
+
+                <p>{{ .Description | default .Summary }}</p>
+
+                <div class="card-meta">
+                  {{ .Date.Format "02/01/2006" }} · {{ .ReadingTime }} min
+                </div>
+
+                <a class="read" href="{{ .RelPermalink }}">
+                  Leer publicación →
+                </a>
+              </article>
+            {{ end }}
+          </div>
+        </section>
+      {{ end }}
+    </div>
+  {{ else }}
+    <p class="empty">Aún no hay publicaciones en esta sección.</p>
+  {{ end }}
 </section>
 
 <script>
 (function () {
-  var grid = document.getElementById("writeups-grid");
-  if (!grid) return;
+  var groups = Array.prototype.slice.call(
+    document.querySelectorAll(".platform-group")
+  );
 
-  var cards = Array.prototype.slice.call(grid.querySelectorAll(".card"));
+  var cards = Array.prototype.slice.call(
+    document.querySelectorAll("#writeups-groups .card")
+  );
+
   var emptyMsg = document.querySelector(".filter-empty");
-  var state = { dificultad: "todas", sistema: "todos" };
 
-  function applyFilters() {
-    var visibleCount = 0;
-    cards.forEach(function (card) {
-      var matchDificultad = state.dificultad === "todas" || card.dataset.dificultad === state.dificultad;
-      var matchSistema = state.sistema === "todos" || card.dataset.sistema.split(",").indexOf(state.sistema) !== -1;
-      var visible = matchDificultad && matchSistema;
-      card.classList.toggle("is-hidden", !visible);
-      if (visible) visibleCount++;
-    });
-    emptyMsg.classList.toggle("is-hidden", visibleCount !== 0);
+  if (!groups.length || !cards.length || !emptyMsg) {
+    return;
   }
 
-  document.querySelectorAll(".filter-btn").forEach(function (btn) {
-    btn.addEventListener("click", function () {
-      var type = btn.dataset.filterType;
-      var value = btn.dataset.filterValue;
+  var state = {
+    plataforma: "todas",
+    dificultad: "todas",
+    sistema: "todos"
+  };
+
+  function cardMatches(card) {
+    var matchesPlatform =
+      state.plataforma === "todas" ||
+      card.dataset.plataforma === state.plataforma;
+
+    var matchesDifficulty =
+      state.dificultad === "todas" ||
+      card.dataset.dificultad === state.dificultad;
+
+    var systems = (card.dataset.sistema || "").split(",");
+
+    var matchesSystem =
+      state.sistema === "todos" ||
+      systems.indexOf(state.sistema) !== -1;
+
+    return matchesPlatform && matchesDifficulty && matchesSystem;
+  }
+
+  function applyFilters() {
+    var visibleCards = 0;
+
+    cards.forEach(function (card) {
+      var visible = cardMatches(card);
+
+      card.classList.toggle("is-hidden", !visible);
+
+      if (visible) {
+        visibleCards += 1;
+      }
+    });
+
+    groups.forEach(function (group) {
+      var hasVisibleCard = group.querySelector(".card:not(.is-hidden)");
+
+      group.classList.toggle("is-hidden", !hasVisibleCard);
+    });
+
+    emptyMsg.classList.toggle("is-hidden", visibleCards !== 0);
+  }
+
+  document.querySelectorAll(".filter-btn").forEach(function (button) {
+    button.addEventListener("click", function () {
+      var type = button.dataset.filterType;
+      var value = button.dataset.filterValue;
+
       state[type] = value;
 
-      document.querySelectorAll('.filter-btn[data-filter-type="' + type + '"]').forEach(function (b) {
-        b.classList.remove("is-active");
-      });
-      btn.classList.add("is-active");
+      document
+        .querySelectorAll(
+          '.filter-btn[data-filter-type="' + type + '"]'
+        )
+        .forEach(function (filterButton) {
+          filterButton.classList.remove("is-active");
+        });
+
+      button.classList.add("is-active");
 
       applyFilters();
     });
