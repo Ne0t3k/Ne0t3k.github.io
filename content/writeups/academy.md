@@ -209,7 +209,7 @@ Se amplía la enumeración sobre la instalación WordPress, incluyendo plugins, 
  | Location: http://academy.thl/wordpress/wp-content/themes/twentytwentyfour/
  | Version: 1.1 (80% confidence)
 
-[+] file-manager
+<span class="hl">[+] file-manager</span>
  | Location: http://academy.thl/wordpress/wp-content/plugins/file-manager/
  | Version: 6.5.1 (80% confidence)
 
@@ -227,7 +227,7 @@ Se amplía la enumeración sobre la instalación WordPress, incluyendo plugins, 
 
 WPScan confirma la presencia de XML-RPC, el usuario `dylan`, WordPress 6.5.3 y el plugin `file-manager` con una versión estimada de 6.5.1. También informa de listados de directorio en varias rutas.
 
-El plugin `file-manager` se conserva como hallazgo de enumeración, pero no se utiliza ni se atribuye a él el acceso inicial: no se documentó una explotación del plugin durante esta resolución. El vector empleado será el servicio XML-RPC y una credencial débil.
+El plugin `file-manager`, identificado durante la enumeración, se podría utilizar posteriormente para subir una shell PHP desde una sesión autenticada.
 
 ## Explotación — Ataque de diccionario contra XML-RPC
 
