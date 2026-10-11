@@ -43,7 +43,7 @@ Nmap done: 256 IP addresses (4 hosts up) scanned in 11.27 seconds
 
 **Desglose de parámetros:**
 
-- `-sP`: modo antiguo de descubrimiento de hosts, actualmente sustituido por `-sn`. Identifica equipos activos sin realizar el escaneo de puertos posterior.
+- `-sP`: Identifica equipos activos sin realizar el escaneo de puertos posterior.
 - `10.0.2.0/24`: rango de 256 direcciones IP sometido al descubrimiento.
 
 Se identifican cuatro hosts activos. La dirección `10.0.2.11` se selecciona como objetivo de la máquina Academy.
